@@ -1,0 +1,20 @@
+name: Build and Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure CMake
+      run: cmake -B build -S .
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Run Tests
+      # Corre los tests y muestra la salida en caso de error
+      run: cd build && ctest --output-on-failure

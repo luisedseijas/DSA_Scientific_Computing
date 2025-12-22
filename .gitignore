@@ -1,0 +1,13 @@
+# .gitignore
+build/
+bin/
+lib/
+*.exe
+*.o
+*.a
+.vscode/
+.idea/
+.DS_Store
+CMakeCache.txt
+CMakeFiles/
+test_results/
