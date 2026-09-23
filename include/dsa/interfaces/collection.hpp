@@ -14,14 +14,14 @@ namespace dsa {
  */
 template <typename T>
 class Collection {
- public:
-  virtual ~Collection() = default;
+   public:
+    virtual ~Collection() = default;
 
-  virtual std::size_t size() const noexcept = 0;
+    virtual std::size_t size() const noexcept = 0;
 
-  virtual bool empty() const noexcept { return size() == 0; }
+    virtual bool empty() const noexcept { return size() == 0; }
 
-  virtual void clear() = 0;
+    virtual void clear() = 0;
 };
 
 }  // namespace dsa
