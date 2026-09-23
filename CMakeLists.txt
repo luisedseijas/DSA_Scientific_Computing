@@ -22,8 +22,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 include(GoogleTest)
 
-# --- 4. Definir Ejecutables y Tests (Ejemplo) ---
-# Aquí irás agregando los ejecutables a medida que avance el curso
+# --- 4. Definir Ejecutables y Tests ---
 
 add_executable(demo_vector examples/demo_vector.cpp)
 target_link_libraries(demo_vector dsa_core)
@@ -32,7 +31,9 @@ target_link_libraries(demo_vector dsa_core)
 add_executable(bench_sorting benchmarks/sorting_benchmark.cpp)
 target_link_libraries(bench_sorting dsa_core)
 
-# Ejemplo de Test (cuando crees el archivo)
-add_executable(unit_tests tests/test_main.cpp)
+# Todos los archivos *_test.cpp bajo tests/ se recogen automáticamente,
+# así cada módulo nuevo solo necesita añadir su archivo de test.
+file(GLOB_RECURSE DSA_TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp)
+add_executable(unit_tests ${DSA_TEST_SOURCES})
 target_link_libraries(unit_tests dsa_core GTest::gtest_main)
 gtest_discover_tests(unit_tests)
