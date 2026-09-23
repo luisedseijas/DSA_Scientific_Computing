@@ -132,11 +132,9 @@ class DynamicArray : public Collection<T> {
      * @throws std::out_of_range if the array is empty.
      */
     void pop_back() {
-        if (empty()) {
-            throw std::out_of_range("DynamicArray::pop_back: array is empty");
-        }
-        --size_;
-        data_[size_].~T();
+        // TODO(estudiante): remove the last element (check for emptiness,
+        // decrement size_, and call the destructor on the removed slot).
+        throw std::logic_error("DynamicArray::pop_back: no implementado");
     }
 
     /**
@@ -147,26 +145,12 @@ class DynamicArray : public Collection<T> {
      * @throws std::out_of_range if index > size().
      */
     void insert(std::size_t index, const T& value) {
-        if (index > size_) {
-            throw std::out_of_range("DynamicArray::insert: index out of range");
-        }
-        if (size_ == capacity_) {
-            grow();
-        }
-        if (index == size_) {
-            // Fast path: inserting at the end is just an append.
-            new (data_ + size_) T(value);
-        } else {
-            // Move the current last element into the new, uninitialized slot,
-            // then shift [index, size_ - 1) right by one via move-assignment,
-            // back to front so no live value is overwritten before it is read.
-            new (data_ + size_) T(std::move(data_[size_ - 1]));
-            for (std::size_t i = size_ - 1; i > index; --i) {
-                data_[i] = std::move(data_[i - 1]);
-            }
-            data_[index] = value;
-        }
-        ++size_;
+        (void)index;
+        (void)value;
+        // TODO(estudiante): insert `value` at `index`, growing the buffer if
+        // necessary and shifting elements [index, size_) one slot to the
+        // right so no live element is overwritten before it is read.
+        throw std::logic_error("DynamicArray::insert: no implementado");
     }
 
     /**
@@ -175,14 +159,11 @@ class DynamicArray : public Collection<T> {
      * @throws std::out_of_range if index >= size().
      */
     void erase(std::size_t index) {
-        if (index >= size_) {
-            throw std::out_of_range("DynamicArray::erase: index out of range");
-        }
-        for (std::size_t i = index; i + 1 < size_; ++i) {
-            data_[i] = std::move(data_[i + 1]);
-        }
-        --size_;
-        data_[size_].~T();
+        (void)index;
+        // TODO(estudiante): remove the element at `index`, shifting
+        // subsequent elements one slot to the left and destroying the
+        // now-unused last slot.
+        throw std::logic_error("DynamicArray::erase: no implementado");
     }
 
     /** @brief Unchecked element access. Behavior is undefined if out of range. */
@@ -258,24 +239,19 @@ class DynamicArray : public Collection<T> {
 
     /** @brief Doubles capacity (or allocates 1 slot if currently empty). */
     void grow() {
-        std::size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
-        T* new_data = allocate(new_capacity);
-        for (std::size_t i = 0; i < size_; ++i) {
-            new (new_data + i) T(std::move(data_[i]));
-            data_[i].~T();
-        }
-        deallocate(data_);
-        data_ = new_data;
-        capacity_ = new_capacity;
+        // TODO(estudiante): allocate a new buffer with double the current
+        // capacity (or 1 if capacity_ is 0), move-construct the existing
+        // elements into it, destroy the old elements, deallocate the old
+        // buffer, and update data_/capacity_.
+        throw std::logic_error("DynamicArray::grow: no implementado");
     }
 
     template <typename U>
     void emplace_back_impl(U&& value) {
-        if (size_ == capacity_) {
-            grow();
-        }
-        new (data_ + size_) T(std::forward<U>(value));
-        ++size_;
+        (void)value;
+        // TODO(estudiante): grow the buffer if it is full, then
+        // construct `value` in place at data_[size_] and increment size_.
+        throw std::logic_error("DynamicArray::push_back: no implementado");
     }
 };
 

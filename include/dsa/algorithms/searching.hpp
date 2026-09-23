@@ -2,6 +2,7 @@
 #define DSA_ALGORITHMS_SEARCHING_HPP
 
 #include <iterator>
+#include <stdexcept>
 
 namespace dsa {
 
@@ -73,22 +74,10 @@ InputIt linear_search(InputIt first, InputIt last, const T& value) {
  * Complexity: O(log n) comparisons.
  */
 template <typename RandomIt, typename T>
-RandomIt binary_search(RandomIt first, RandomIt last, const T& value) {
-    auto count = std::distance(first, last);
-    while (count > 0) {
-        auto step = count / 2;
-        RandomIt mid = first;
-        std::advance(mid, step);
-        if (*mid < value) {
-            first = ++mid;
-            count -= step + 1;
-        } else if (value < *mid) {
-            count = step;
-        } else {
-            return mid;
-        }
-    }
-    return last;
+RandomIt binary_search(RandomIt /*first*/, RandomIt /*last*/, const T& /*value*/) {
+    // TODO(estudiante): reduce iterativamente el rango a la mitad comparando
+    // el elemento central con value, hasta encontrarlo o agotar el rango.
+    throw std::logic_error("dsa::binary_search: no implementado");
 }
 
 /**
@@ -108,8 +97,11 @@ RandomIt binary_search(RandomIt first, RandomIt last, const T& value) {
  * @return Iterator to a matching element, or `last` if not found.
  */
 template <typename RandomIt, typename T>
-RandomIt binary_search_recursive(RandomIt first, RandomIt last, const T& value) {
-    return detail::binary_search_recursive_impl(first, last, last, value);
+RandomIt binary_search_recursive(RandomIt /*first*/, RandomIt /*last*/, const T& /*value*/) {
+    // TODO(estudiante): version recursiva de binary_search; delega en un
+    // helper (por ejemplo detail::binary_search_recursive_impl) que compare
+    // el elemento central y recurse sobre la mitad correspondiente.
+    throw std::logic_error("dsa::binary_search_recursive: no implementado");
 }
 
 }  // namespace dsa

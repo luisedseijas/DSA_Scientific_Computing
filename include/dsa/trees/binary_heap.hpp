@@ -267,16 +267,12 @@ class BinaryHeap : public Collection<T> {
      * O(log n), so this is O(log n) in the worst case.
      */
     void sift_up(std::size_t i) {
-        while (i > 0) {
-            std::size_t parent = parent_of(i);
-            // compare_(data_[parent], data_[i]) true means the parent should
-            // end up below i, i.e. i must move up past it.
-            if (!compare_(data_[parent], data_[i])) {
-                break;
-            }
-            std::swap(data_[parent], data_[i]);
-            i = parent;
-        }
+        (void)i;
+        // TODO(estudiante): mover el elemento en el índice i hacia la raíz
+        // mientras esté ordenado por encima de su padre según Compare,
+        // intercambiando en cada paso, hasta llegar a la raíz o encontrar
+        // un padre que no deba ceder su lugar.
+        throw std::logic_error("BinaryHeap::sift_up: no implementado");
     }
 
     /**
@@ -288,22 +284,12 @@ class BinaryHeap : public Collection<T> {
      * root-to-leaf path is walked.
      */
     void sift_down(std::size_t i) {
-        while (true) {
-            std::size_t left = left_of(i);
-            std::size_t right = right_of(i);
-            std::size_t best = i;
-            if (left < size_ && compare_(data_[best], data_[left])) {
-                best = left;
-            }
-            if (right < size_ && compare_(data_[best], data_[right])) {
-                best = right;
-            }
-            if (best == i) {
-                break;
-            }
-            std::swap(data_[i], data_[best]);
-            i = best;
-        }
+        (void)i;
+        // TODO(estudiante): mover el elemento en el índice i hacia las hojas,
+        // intercambiando repetidamente con el hijo que deba quedar por
+        // encima de él según Compare, hasta que ningún hijo lo supere o se
+        // llegue a una hoja.
+        throw std::logic_error("BinaryHeap::sift_down: no implementado");
     }
 
     /**

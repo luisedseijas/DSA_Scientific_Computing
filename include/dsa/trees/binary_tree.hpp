@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <functional>
 #include <queue>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -223,31 +224,12 @@ class BinaryTree : public Collection<T> {
 
    private:
     void insert_impl(Node&& fresh) {
-        Node* new_node = new Node(std::move(fresh.value));
-        if (root_ == nullptr) {
-            root_ = new_node;
-            ++size_;
-            return;
-        }
-        // BFS to find the first node missing a left or right child.
-        std::queue<Node*> pending;
-        pending.push(root_);
-        while (!pending.empty()) {
-            Node* current = pending.front();
-            pending.pop();
-            if (current->left == nullptr) {
-                current->left = new_node;
-                ++size_;
-                return;
-            }
-            pending.push(current->left);
-            if (current->right == nullptr) {
-                current->right = new_node;
-                ++size_;
-                return;
-            }
-            pending.push(current->right);
-        }
+        (void)fresh;
+        // TODO(estudiante): insertar `fresh.value` en el primer espacio libre
+        // recorriendo el arbol en orden por niveles (BFS con una cola),
+        // exactamente como crece un binary heap por posicion; recordar
+        // incrementar `size_` al insertar.
+        throw std::logic_error("BinaryTree::insert: no implementado");
     }
 };
 

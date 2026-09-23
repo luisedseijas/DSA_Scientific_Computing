@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
+#include <stdexcept>
 #include <vector>
 
 namespace dsa {
@@ -26,23 +27,10 @@ namespace dsa {
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
-void bubble_sort(RandomIt first, RandomIt last, Compare comp = Compare()) {
-    if (first == last) return;
-    bool swapped = true;
-    RandomIt end = last;
-    while (swapped) {
-        swapped = false;
-        RandomIt current = first;
-        RandomIt next = current;
-        ++next;
-        for (; next != end; ++current, ++next) {
-            if (comp(*next, *current)) {
-                std::iter_swap(current, next);
-                swapped = true;
-            }
-        }
-        end = current;
-    }
+void bubble_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Compare()) {
+    // TODO(estudiante): recorre repetidamente el rango intercambiando pares
+    // adyacentes fuera de orden, hasta que una pasada completa no haga swaps.
+    throw std::logic_error("dsa::bubble_sort: no implementado");
 }
 
 /**
@@ -62,17 +50,11 @@ void bubble_sort(RandomIt first, RandomIt last, Compare comp = Compare()) {
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
-void insertion_sort(RandomIt first, RandomIt last, Compare comp = Compare()) {
-    if (first == last) return;
-    for (RandomIt it = first + 1; it != last; ++it) {
-        typename std::iterator_traits<RandomIt>::value_type key = std::move(*it);
-        RandomIt hole = it;
-        while (hole != first && comp(key, *(hole - 1))) {
-            *hole = std::move(*(hole - 1));
-            --hole;
-        }
-        *hole = std::move(key);
-    }
+void insertion_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Compare()) {
+    // TODO(estudiante): construye el rango ordenado incrementalmente,
+    // insertando cada elemento en su posicion correcta dentro del prefijo ya
+    // ordenado.
+    throw std::logic_error("dsa::insertion_sort: no implementado");
 }
 
 /**
@@ -93,19 +75,10 @@ void insertion_sort(RandomIt first, RandomIt last, Compare comp = Compare()) {
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
-void selection_sort(RandomIt first, RandomIt last, Compare comp = Compare()) {
-    if (first == last) return;
-    for (RandomIt it = first; it != last; ++it) {
-        RandomIt min_it = it;
-        for (RandomIt jt = it + 1; jt != last; ++jt) {
-            if (comp(*jt, *min_it)) {
-                min_it = jt;
-            }
-        }
-        if (min_it != it) {
-            std::iter_swap(it, min_it);
-        }
-    }
+void selection_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Compare()) {
+    // TODO(estudiante): en cada iteracion, busca el minimo del sufijo no
+    // ordenado (segun comp) e intercambialo con el inicio de ese sufijo.
+    throw std::logic_error("dsa::selection_sort: no implementado");
 }
 
 namespace detail {
@@ -162,13 +135,10 @@ void merge_ranges(RandomIt first, RandomIt mid, RandomIt last, Compare comp) {
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
-void merge_sort(RandomIt first, RandomIt last, Compare comp = Compare()) {
-    auto distance = std::distance(first, last);
-    if (distance <= 1) return;
-    RandomIt mid = first + distance / 2;
-    merge_sort(first, mid, comp);
-    merge_sort(mid, last, comp);
-    detail::merge_ranges(first, mid, last, comp);
+void merge_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Compare()) {
+    // TODO(estudiante): divide el rango a la mitad, ordena recursivamente
+    // cada mitad y fusionalas con detail::merge_ranges.
+    throw std::logic_error("dsa::merge_sort: no implementado");
 }
 
 namespace detail {
@@ -241,8 +211,10 @@ void quick_sort_impl(RandomIt first, RandomIt last, Compare comp) {
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
-void quick_sort(RandomIt first, RandomIt last, Compare comp = Compare()) {
-    detail::quick_sort_impl(first, last, comp);
+void quick_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Compare()) {
+    // TODO(estudiante): elige un pivote, particiona el rango alrededor de el
+    // y ordena recursivamente las dos particiones resultantes.
+    throw std::logic_error("dsa::quick_sort: no implementado");
 }
 
 namespace detail {
@@ -294,21 +266,10 @@ void sift_down(RandomIt first, std::size_t heap_size, std::size_t root, Compare 
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
-void heap_sort(RandomIt first, RandomIt last, Compare comp = Compare()) {
-    auto n = std::distance(first, last);
-    if (n <= 1) return;
-    std::size_t heap_size = static_cast<std::size_t>(n);
-
-    // Build the max-heap: sift down every non-leaf node, bottom-up.
-    for (std::size_t i = heap_size / 2; i-- > 0;) {
-        detail::sift_down(first, heap_size, i, comp);
-    }
-
-    // Repeatedly move the max to the end and shrink the heap.
-    for (std::size_t end = heap_size - 1; end > 0; --end) {
-        std::iter_swap(first, first + end);
-        detail::sift_down(first, end, 0, comp);
-    }
+void heap_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Compare()) {
+    // TODO(estudiante): construye un max-heap en el rango con detail::sift_down
+    // y luego extrae repetidamente el maximo hacia el final del rango.
+    throw std::logic_error("dsa::heap_sort: no implementado");
 }
 
 }  // namespace dsa

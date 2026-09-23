@@ -25,27 +25,9 @@ namespace dsa {
  */
 template <typename Vertex>
 std::vector<Vertex> bfs(const Graph<Vertex>& graph, const Vertex& source) {
-    std::vector<Vertex> order;
-    if (!graph.contains(source)) return order;
-
-    std::unordered_set<Vertex> visited;
-    std::queue<Vertex> pending;
-
-    visited.insert(source);
-    pending.push(source);
-
-    while (!pending.empty()) {
-        Vertex current = pending.front();
-        pending.pop();
-        order.push_back(current);
-        for (const auto& [neighbor, weight] : graph.neighbors(current)) {
-            (void)weight;
-            if (visited.insert(neighbor).second) {
-                pending.push(neighbor);
-            }
-        }
-    }
-    return order;
+    // TODO(estudiante): usar una cola (std::queue) y un conjunto de
+    // visitados (std::unordered_set) para recorrer el grafo nivel a nivel.
+    throw std::logic_error("dsa::bfs: no implementado");
 }
 
 /**
@@ -66,26 +48,9 @@ std::vector<Vertex> bfs(const Graph<Vertex>& graph, const Vertex& source) {
  */
 template <typename Vertex>
 std::vector<Vertex> dfs(const Graph<Vertex>& graph, const Vertex& source) {
-    std::vector<Vertex> order;
-    if (!graph.contains(source)) return order;
-
-    std::unordered_set<Vertex> visited;
-    std::vector<Vertex> stack;
-    stack.push_back(source);
-
-    while (!stack.empty()) {
-        Vertex current = stack.back();
-        stack.pop_back();
-        if (!visited.insert(current).second) continue;
-        order.push_back(current);
-        for (const auto& [neighbor, weight] : graph.neighbors(current)) {
-            (void)weight;
-            if (visited.find(neighbor) == visited.end()) {
-                stack.push_back(neighbor);
-            }
-        }
-    }
-    return order;
+    // TODO(estudiante): usar una pila explícita (std::vector como stack) y
+    // un conjunto de visitados para recorrer el grafo en profundidad.
+    throw std::logic_error("dsa::dfs: no implementado");
 }
 
 namespace detail {
@@ -93,14 +58,9 @@ namespace detail {
 template <typename Vertex>
 void dfs_recursive_impl(const Graph<Vertex>& graph, const Vertex& current,
                         std::unordered_set<Vertex>& visited, std::vector<Vertex>& order) {
-    visited.insert(current);
-    order.push_back(current);
-    for (const auto& [neighbor, weight] : graph.neighbors(current)) {
-        (void)weight;
-        if (visited.find(neighbor) == visited.end()) {
-            dfs_recursive_impl(graph, neighbor, visited, order);
-        }
-    }
+    // TODO(estudiante): marcar `current` como visitado, agregarlo a `order`
+    // y llamar recursivamente sobre cada vecino no visitado.
+    throw std::logic_error("dsa::dfs_recursive: no implementado");
 }
 
 }  // namespace detail
@@ -141,42 +101,10 @@ std::vector<Vertex> dfs_recursive(const Graph<Vertex>& graph, const Vertex& sour
  */
 template <typename Vertex>
 std::unordered_map<Vertex, double> dijkstra(const Graph<Vertex>& graph, const Vertex& source) {
-    for (const auto& vertex : graph.vertices()) {
-        for (const auto& [neighbor, weight] : graph.neighbors(vertex)) {
-            (void)neighbor;
-            if (weight < 0.0) {
-                throw std::invalid_argument(
-                    "dijkstra: negative edge weight detected; use Bellman-Ford instead");
-            }
-        }
-    }
-
-    std::unordered_map<Vertex, double> distance;
-    using DistVertex = std::pair<double, Vertex>;
-    std::priority_queue<DistVertex, std::vector<DistVertex>, std::greater<DistVertex>> frontier;
-
-    distance[source] = 0.0;
-    frontier.emplace(0.0, source);
-
-    while (!frontier.empty()) {
-        auto [dist_u, u] = frontier.top();
-        frontier.pop();
-
-        // Stale entry: a shorter path to u was already relaxed.
-        auto it = distance.find(u);
-        if (it != distance.end() && dist_u > it->second) continue;
-
-        for (const auto& [v, weight] : graph.neighbors(u)) {
-            double candidate = dist_u + weight;
-            auto existing = distance.find(v);
-            if (existing == distance.end() || candidate < existing->second) {
-                distance[v] = candidate;
-                frontier.emplace(candidate, v);
-            }
-        }
-    }
-
-    return distance;
+    // TODO(estudiante): usar std::priority_queue de pares (distancia,
+    // vertice) para relajar aristas por orden creciente de distancia
+    // acumulada; verificar primero que no haya pesos negativos.
+    throw std::logic_error("dsa::dijkstra: no implementado");
 }
 
 /**
@@ -196,46 +124,10 @@ std::unordered_map<Vertex, double> dijkstra(const Graph<Vertex>& graph, const Ve
  */
 template <typename Vertex>
 std::vector<Vertex> topological_sort(const Graph<Vertex>& graph) {
-    if (!graph.directed()) {
-        throw std::invalid_argument("topological_sort: graph must be directed");
-    }
-
-    std::unordered_map<Vertex, int> in_degree;
-    for (const auto& vertex : graph.vertices()) {
-        in_degree.try_emplace(vertex, 0);
-    }
-    for (const auto& vertex : graph.vertices()) {
-        for (const auto& [neighbor, weight] : graph.neighbors(vertex)) {
-            (void)weight;
-            ++in_degree[neighbor];
-        }
-    }
-
-    std::queue<Vertex> zero_in_degree;
-    for (const auto& [vertex, degree] : in_degree) {
-        if (degree == 0) zero_in_degree.push(vertex);
-    }
-
-    std::vector<Vertex> order;
-    order.reserve(graph.vertex_count());
-
-    while (!zero_in_degree.empty()) {
-        Vertex current = zero_in_degree.front();
-        zero_in_degree.pop();
-        order.push_back(current);
-        for (const auto& [neighbor, weight] : graph.neighbors(current)) {
-            (void)weight;
-            if (--in_degree[neighbor] == 0) {
-                zero_in_degree.push(neighbor);
-            }
-        }
-    }
-
-    if (order.size() != graph.vertex_count()) {
-        throw std::runtime_error("topological_sort: graph contains a cycle");
-    }
-
-    return order;
+    // TODO(estudiante): algoritmo de Kahn con grados de entrada: calcular el
+    // in-degree de cada vertice, encolar los que tienen in-degree 0, y al
+    // sacarlos de la cola decrementar el in-degree de sus vecinos.
+    throw std::logic_error("dsa::topological_sort: no implementado");
 }
 
 }  // namespace dsa

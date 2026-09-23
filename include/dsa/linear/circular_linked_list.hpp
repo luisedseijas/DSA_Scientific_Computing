@@ -122,8 +122,19 @@ class CircularLinkedList : public Collection<T> {
     CircularLinkedList() = default;
 
     CircularLinkedList(std::initializer_list<T> values) {
+        // Built directly with raw pointers (not push_back) so this constructor
+        // keeps working even before push_back is implemented.
         for (const auto& value : values) {
-            push_back(value);
+            if (tail_ == nullptr) {
+                Node* node = new Node(value);
+                node->next = node;
+                tail_ = node;
+            } else {
+                Node* node = new Node(value, tail_->next);
+                tail_->next = node;
+                tail_ = node;
+            }
+            ++size_;
         }
     }
 
@@ -177,49 +188,27 @@ class CircularLinkedList : public Collection<T> {
     // --- Modifiers ---
 
     void push_front(const T& value) {
-        if (tail_ == nullptr) {
-            Node* node = new Node(value);
-            node->next = node;
-            tail_ = node;
-        } else {
-            Node* node = new Node(value, tail_->next);
-            tail_->next = node;
-        }
-        ++size_;
+        // TODO(estudiante): insertar `value` como nuevo head (justo después de tail_->next), manejando el caso de lista vacía (nodo con auto-referencia) y actualizando size_.
+        (void)value;
+        throw std::logic_error("CircularLinkedList::push_front: no implementado");
     }
 
     void push_back(const T& value) {
-        push_front(value);
-        tail_ = tail_->next;
+        // TODO(estudiante): insertar `value` como nuevo último elemento y avanzar tail_ para que apunte a él.
+        (void)value;
+        throw std::logic_error("CircularLinkedList::push_back: no implementado");
     }
 
     void pop_front() {
-        if (tail_ == nullptr) {
-            throw std::out_of_range("CircularLinkedList::pop_front: list is empty");
-        }
-        Node* head = tail_->next;
-        if (head == tail_) {
-            delete head;
-            tail_ = nullptr;
-        } else {
-            tail_->next = head->next;
-            delete head;
-        }
-        --size_;
+        // TODO(estudiante): eliminar el nodo head (tail_->next), liberar su memoria y actualizar tail_/size_ (caso especial: un solo elemento).
+        throw std::logic_error("CircularLinkedList::pop_front: no implementado");
     }
 
     /** @brief Rotates the list by `n` positions (positive: head advances forward). */
     void rotate(long long n) {
-        if (size_ == 0) {
-            return;
-        }
-        long long steps = n % static_cast<long long>(size_);
-        if (steps < 0) {
-            steps += static_cast<long long>(size_);
-        }
-        for (long long i = 0; i < steps; ++i) {
-            tail_ = tail_->next;
-        }
+        // TODO(estudiante): avanzar tail_ el número de posiciones equivalente a `n` (mod size_), soportando `n` negativo.
+        (void)n;
+        throw std::logic_error("CircularLinkedList::rotate: no implementado");
     }
 
     // --- Accessors ---
@@ -288,8 +277,19 @@ class CircularLinkedList : public Collection<T> {
 
    private:
     void copy_from(const CircularLinkedList& other) {
+        // Built directly with raw pointers (not push_back) so copy/move keep
+        // working even before push_back is implemented.
         for (const auto& value : other) {
-            push_back(value);
+            if (tail_ == nullptr) {
+                Node* node = new Node(value);
+                node->next = node;
+                tail_ = node;
+            } else {
+                Node* node = new Node(value, tail_->next);
+                tail_->next = node;
+                tail_ = node;
+            }
+            ++size_;
         }
     }
 

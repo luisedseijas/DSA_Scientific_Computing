@@ -61,6 +61,22 @@ To measure the performance of your implementations:
 
 ---
 
+## 🗺️ Módulos del curso
+
+Este repo se construye por hitos, uno por estructura de datos. El roadmap
+completo (qué falta implementar en cada módulo, qué guía leer primero) vive
+en **[docs/MILESTONES.md](docs/MILESTONES.md)**.
+
+`main` es la versión **esqueleto**: las firmas, la documentación Doxygen y
+los tests ya existen, pero los métodos clave de cada estructura están
+marcados `// TODO(estudiante): ...` y lanzan `std::logic_error` hasta que se
+implementan — por eso la suite de tests parte en rojo (73/341 en verde de
+entrada: todo el andamiaje que ya funciona). Cada test que falla es, en
+efecto, un ítem de la lista de tareas. La rama `solutions` tiene la
+implementación de referencia completa (uso del docente).
+
+---
+
 ## 📂 Project Structure
 
 The repository follows a clean separation of concerns:
@@ -69,10 +85,13 @@ The repository follows a clean separation of concerns:
 .
 ├── include/dsa/        # HEADER-ONLY LIBRARY (The Core)
 │   ├── interfaces/     # Abstract base classes (Contacts)
-│   ├── linear/         # Arrays, Lists, Stacks, Queues
-│   ├── trees/          # BST, AVL, RB-Trees, Heaps
+│   ├── linear/         # Arrays, Lists, Stacks, Queues, Deque
+│   ├── trees/          # BST, Binary Tree, Heap, Priority Queue
+│   ├── hashing/         # HashMap, HashSet
+│   ├── graphs/          # Graph, BFS/DFS/Dijkstra/Topo Sort
 │   ├── algorithms/     # Sorting, Searching
 │   └── utils/          # Helpers (Timer, Random, etc.)
+├── docs/guides/         # Guías pedagógicas por módulo (español)
 ├── tests/              # Unit tests (GoogleTest)
 ├── benchmarks/         # Performance measurement scripts
 ├── examples/           # Minimal "Hello World" checks

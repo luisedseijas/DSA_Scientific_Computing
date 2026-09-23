@@ -111,11 +111,9 @@ class Stack : public Collection<T> {
      * @throws std::out_of_range if the stack is empty.
      */
     void pop() {
-        if (empty()) {
-            throw std::out_of_range("Stack::pop: stack is empty");
-        }
-        --size_;
-        data_[size_].~T();
+        // TODO(estudiante): quitar el elemento del tope: decrementar size_ y
+        // llamar al destructor del elemento que queda fuera de rango.
+        throw std::logic_error("Stack::pop: no implementado");
     }
 
     /**
@@ -161,24 +159,20 @@ class Stack : public Collection<T> {
 
     /** @brief Doubles capacity (or allocates 1 slot if currently empty). */
     void grow() {
-        std::size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
-        T* new_data = allocate(new_capacity);
-        for (std::size_t i = 0; i < size_; ++i) {
-            new (new_data + i) T(std::move(data_[i]));
-            data_[i].~T();
-        }
-        deallocate(data_);
-        data_ = new_data;
-        capacity_ = new_capacity;
+        // TODO(estudiante): asignar un buffer nuevo del doble de capacidad
+        // (o 1 si capacity_ es 0), mover los elementos existentes al nuevo
+        // buffer, destruirlos en el viejo, liberar el viejo buffer y
+        // actualizar data_/capacity_.
+        throw std::logic_error("Stack::grow: no implementado");
     }
 
     template <typename U>
     void push_impl(U&& value) {
-        if (size_ == capacity_) {
-            grow();
-        }
-        new (data_ + size_) T(std::forward<U>(value));
-        ++size_;
+        // TODO(estudiante): si el buffer está lleno (size_ == capacity_),
+        // llamar a grow(); luego construir value al final del buffer con
+        // placement-new e incrementar size_.
+        (void)value;
+        throw std::logic_error("Stack::push: no implementado");
     }
 };
 

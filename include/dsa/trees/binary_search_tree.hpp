@@ -306,36 +306,25 @@ class BinarySearchTree : public Collection<T> {
     }
 
     Node* find_node(const T& value) const {
-        Node* current = root_;
-        while (current != nullptr) {
-            if (value < current->value) {
-                current = current->left;
-            } else if (current->value < value) {
-                current = current->right;
-            } else {
-                return current;
-            }
-        }
-        return nullptr;
+        (void)value;
+        // TODO(estudiante): recorrer el arbol desde la raiz comparando
+        // `value` con `current->value` usando `operator<`; bajar a la
+        // izquierda si `value` es menor, a la derecha si es mayor, y
+        // devolver el nodo cuando ninguna comparacion es cierta (valor
+        // encontrado). Devolver nullptr si se llega a un puntero nulo.
+        throw std::logic_error("BinarySearchTree::find: no implementado");
     }
 
     template <typename U>
     bool insert_impl(U&& value) {
-        Node** slot = &root_;
-        Node* parent = nullptr;
-        while (*slot != nullptr) {
-            parent = *slot;
-            if (value < parent->value) {
-                slot = &parent->left;
-            } else if (parent->value < value) {
-                slot = &parent->right;
-            } else {
-                return false;  // duplicate, ignored
-            }
-        }
-        *slot = new Node(std::forward<U>(value), parent);
-        ++size_;
-        return true;
+        (void)value;
+        // TODO(estudiante): insertar `value` manteniendo el invariante BST:
+        // descender desde la raiz comparando con `operator<` hasta hallar el
+        // puntero nulo donde debe colgar el nuevo nodo (guardando el padre
+        // recorrido); si el valor ya existe (ni menor ni mayor), no insertar
+        // y devolver false; en otro caso crear el nodo, enlazarlo, aumentar
+        // `size_` y devolver true.
+        throw std::logic_error("BinarySearchTree::insert: no implementado");
     }
 
     // Replaces the subtree rooted at `node` with the subtree rooted at
@@ -353,30 +342,16 @@ class BinarySearchTree : public Collection<T> {
     }
 
     void erase_node(Node* target) {
-        if (target->left == nullptr) {
-            // Case 1 (leaf, no children): transplant with nullptr.
-            // Case 2a (only right child): transplant with the right child.
-            transplant(target, target->right);
-            delete target;
-        } else if (target->right == nullptr) {
-            // Case 2b (only left child): transplant with the left child.
-            transplant(target, target->left);
-            delete target;
-        } else {
-            // Case 3 (two children): find the in-order successor (smallest node
-            // in the right subtree), which has no left child. Splice it out and
-            // put it in target's place.
-            Node* successor = leftmost(target->right);
-            if (successor->parent != target) {
-                transplant(successor, successor->right);
-                successor->right = target->right;
-                successor->right->parent = successor;
-            }
-            transplant(target, successor);
-            successor->left = target->left;
-            successor->left->parent = successor;
-            delete target;
-        }
+        (void)target;
+        // TODO(estudiante): eliminar `target` manejando los 3 casos clasicos:
+        // (1) hoja o solo hijo derecho -> transplant(target, target->right);
+        // (2) solo hijo izquierdo -> transplant(target, target->left);
+        // (3) dos hijos -> localizar el sucesor in-order (leftmost(target->right)),
+        // desconectarlo de su lugar (transplant con su propio hijo derecho si
+        // no es hijo directo de target), y transplant(target, successor)
+        // enlazando successor->left = target->left. En todos los casos,
+        // liberar `target` con delete al terminar.
+        throw std::logic_error("BinarySearchTree::erase: no implementado");
     }
 };
 

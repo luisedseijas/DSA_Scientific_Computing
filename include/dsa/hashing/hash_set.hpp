@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <stdexcept>
 #include <vector>
 
 namespace dsa {
@@ -39,23 +40,20 @@ class HashSet {
      * @return true if `key` was newly inserted, false if it already existed.
      */
     bool insert(const Key& key) {
-        maybe_rehash();
-        bucket_type& bucket = buckets_[bucket_index(key)];
-        for (const Key& existing : bucket) {
-            if (existing == key) return false;
-        }
-        bucket.push_back(key);
-        ++size_;
-        return true;
+        (void)key;
+        // TODO(estudiante): si `key` ya está presente, devuelve false sin
+        // modificar el set; si no, agrégala al bucket correspondiente,
+        // incrementa size_ y devuelve true. No olvides llamar a
+        // maybe_rehash() antes de insertar.
+        throw std::logic_error("HashSet::insert: no implementado");
     }
 
     /** @brief Returns true if `key` is present in the set. */
     bool contains(const Key& key) const {
-        const bucket_type& bucket = buckets_[bucket_index(key)];
-        for (const Key& existing : bucket) {
-            if (existing == key) return true;
-        }
-        return false;
+        (void)key;
+        // TODO(estudiante): recorre el bucket correspondiente a `key` y
+        // devuelve true si la encuentras, false si no.
+        throw std::logic_error("HashSet::contains: no implementado");
     }
 
     /**
@@ -64,11 +62,11 @@ class HashSet {
      * equality/hash (e.g. a struct hashed/compared only by one field).
      */
     const Key* find(const Key& key) const {
-        const bucket_type& bucket = buckets_[bucket_index(key)];
-        for (const Key& existing : bucket) {
-            if (existing == key) return &existing;
-        }
-        return nullptr;
+        (void)key;
+        // TODO(estudiante): recorre el bucket correspondiente a `key` y
+        // devuelve un puntero al elemento almacenado si lo encuentras, o
+        // nullptr si no está presente.
+        throw std::logic_error("HashSet::find: no implementado");
     }
 
     /**
@@ -76,15 +74,11 @@ class HashSet {
      * @return true if an element was removed, false if `key` was not found.
      */
     bool erase(const Key& key) {
-        bucket_type& bucket = buckets_[bucket_index(key)];
-        for (auto it = bucket.begin(); it != bucket.end(); ++it) {
-            if (*it == key) {
-                bucket.erase(it);
-                --size_;
-                return true;
-            }
-        }
-        return false;
+        (void)key;
+        // TODO(estudiante): busca `key` en su bucket; si la encuentras,
+        // elimínala del vector, decrementa size_ y devuelve true. Si no
+        // está presente, devuelve false.
+        throw std::logic_error("HashSet::erase: no implementado");
     }
 
     /** @brief Number of keys stored in the set. */
@@ -112,14 +106,11 @@ class HashSet {
     std::size_t bucket_index(const Key& key) const { return Hash{}(key) % buckets_.size(); }
 
     void maybe_rehash() {
-        if (load_factor() <= kMaxLoadFactor) return;
-        std::vector<bucket_type> old_buckets = std::move(buckets_);
-        buckets_.assign(old_buckets.size() * 2, bucket_type{});
-        for (const bucket_type& bucket : old_buckets) {
-            for (const Key& key : bucket) {
-                buckets_[bucket_index(key)].push_back(key);
-            }
-        }
+        // TODO(estudiante): si load_factor() no supera kMaxLoadFactor, no
+        // hagas nada. Si lo supera, duplica el número de buckets y
+        // reinserta cada clave existente en el nuevo arreglo de buckets
+        // (recalculando su índice con el nuevo bucket_count).
+        throw std::logic_error("HashSet::maybe_rehash: no implementado");
     }
 
     std::vector<bucket_type> buckets_;

@@ -102,8 +102,17 @@ class SinglyLinkedList : public Collection<T> {
     SinglyLinkedList() = default;
 
     SinglyLinkedList(std::initializer_list<T> values) {
+        // Built directly with raw pointers (not push_back) so this constructor
+        // keeps working even before push_back is implemented.
         for (const auto& value : values) {
-            push_back(value);
+            Node* node = new Node(value);
+            if (tail_ == nullptr) {
+                head_ = tail_ = node;
+            } else {
+                tail_->next = node;
+                tail_ = node;
+            }
+            ++size_;
         }
     }
 
@@ -162,124 +171,61 @@ class SinglyLinkedList : public Collection<T> {
     // --- Modifiers ---
 
     void push_front(const T& value) {
-        head_ = new Node(value, head_);
-        if (tail_ == nullptr) {
-            tail_ = head_;
-        }
-        ++size_;
+        // TODO(estudiante): crear un nuevo nodo con `value` enlazado al head_ actual y actualizar head_/tail_/size_.
+        (void)value;
+        throw std::logic_error("SinglyLinkedList::push_front: no implementado");
     }
 
     void push_front(T&& value) {
-        head_ = new Node(std::move(value), head_);
-        if (tail_ == nullptr) {
-            tail_ = head_;
-        }
-        ++size_;
+        // TODO(estudiante): crear un nuevo nodo moviendo `value`, enlazarlo al head_ actual y actualizar head_/tail_/size_.
+        (void)value;
+        throw std::logic_error("SinglyLinkedList::push_front: no implementado");
     }
 
     void push_back(const T& value) {
-        Node* node = new Node(value);
-        if (tail_ == nullptr) {
-            head_ = tail_ = node;
-        } else {
-            tail_->next = node;
-            tail_ = node;
-        }
-        ++size_;
+        // TODO(estudiante): crear un nuevo nodo con `value` y enlazarlo después de tail_ (o como único nodo si la lista está vacía).
+        (void)value;
+        throw std::logic_error("SinglyLinkedList::push_back: no implementado");
     }
 
     void push_back(T&& value) {
-        Node* node = new Node(std::move(value));
-        if (tail_ == nullptr) {
-            head_ = tail_ = node;
-        } else {
-            tail_->next = node;
-            tail_ = node;
-        }
-        ++size_;
+        // TODO(estudiante): crear un nuevo nodo moviendo `value` y enlazarlo después de tail_ (o como único nodo si la lista está vacía).
+        (void)value;
+        throw std::logic_error("SinglyLinkedList::push_back: no implementado");
     }
 
     void pop_front() {
-        if (head_ == nullptr) {
-            throw std::out_of_range("SinglyLinkedList::pop_front: list is empty");
-        }
-        Node* old_head = head_;
-        head_ = head_->next;
-        if (head_ == nullptr) {
-            tail_ = nullptr;
-        }
-        delete old_head;
-        --size_;
+        // TODO(estudiante): eliminar el nodo head_ actual, liberar su memoria y actualizar head_/tail_/size_.
+        throw std::logic_error("SinglyLinkedList::pop_front: no implementado");
     }
 
     /** @brief Removes the last element. O(n): requires finding the new tail. */
     void pop_back() {
-        if (head_ == nullptr) {
-            throw std::out_of_range("SinglyLinkedList::pop_back: list is empty");
-        }
-        if (head_ == tail_) {
-            delete head_;
-            head_ = tail_ = nullptr;
-            --size_;
-            return;
-        }
-        Node* current = head_;
-        while (current->next != tail_) {
-            current = current->next;
-        }
-        delete tail_;
-        tail_ = current;
-        tail_->next = nullptr;
-        --size_;
+        // TODO(estudiante): encontrar el nodo previo a tail_ recorriendo desde head_, eliminar tail_ y actualizar tail_/size_.
+        throw std::logic_error("SinglyLinkedList::pop_back: no implementado");
     }
 
     /** @brief Inserts `value` right after the node currently at `index`. */
     void insert_after(std::size_t index, const T& value) {
-        if (index >= size_) {
-            throw std::out_of_range("SinglyLinkedList::insert_after: index out of range");
-        }
-        Node* prev = node_at(index);
-        Node* node = new Node(value, prev->next);
-        prev->next = node;
-        if (node->next == nullptr) {
-            tail_ = node;
-        }
-        ++size_;
+        // TODO(estudiante): insertar un nuevo nodo con `value` inmediatamente después del nodo en `index`, actualizando tail_ si corresponde.
+        (void)index;
+        (void)value;
+        throw std::logic_error("SinglyLinkedList::insert_after: no implementado");
     }
 
     /** @brief Inserts `value` so it becomes the element at `index`. */
     void insert_at(std::size_t index, const T& value) {
-        if (index > size_) {
-            throw std::out_of_range("SinglyLinkedList::insert_at: index out of range");
-        }
-        if (index == 0) {
-            push_front(value);
-            return;
-        }
-        if (index == size_) {
-            push_back(value);
-            return;
-        }
-        insert_after(index - 1, value);
+        // TODO(estudiante): insertar `value` de modo que quede en la posición `index` (casos especiales: index == 0 e index == size_).
+        (void)index;
+        (void)value;
+        throw std::logic_error("SinglyLinkedList::insert_at: no implementado");
     }
 
     /** @brief Removes the element located at `index`. */
     void erase_at(std::size_t index) {
-        if (index >= size_) {
-            throw std::out_of_range("SinglyLinkedList::erase_at: index out of range");
-        }
-        if (index == 0) {
-            pop_front();
-            return;
-        }
-        Node* prev = node_at(index - 1);
-        Node* target = prev->next;
-        prev->next = target->next;
-        if (target == tail_) {
-            tail_ = prev;
-        }
-        delete target;
-        --size_;
+        // TODO(estudiante): eliminar el nodo en la posición `index`, reenlazando el nodo previo y actualizando tail_/size_ si corresponde.
+        (void)index;
+        throw std::logic_error("SinglyLinkedList::erase_at: no implementado");
     }
 
     // --- Accessors ---
@@ -356,8 +302,17 @@ class SinglyLinkedList : public Collection<T> {
     }
 
     void copy_from(const SinglyLinkedList& other) {
+        // Built directly with raw pointers (not push_back) so copy/move keep
+        // working even before push_back is implemented.
         for (const auto& value : other) {
-            push_back(value);
+            Node* node = new Node(value);
+            if (tail_ == nullptr) {
+                head_ = tail_ = node;
+            } else {
+                tail_->next = node;
+                tail_ = node;
+            }
+            ++size_;
         }
     }
 

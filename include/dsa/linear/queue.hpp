@@ -122,12 +122,9 @@ class Queue : public Collection<T> {
      * @throws std::out_of_range if the queue is empty.
      */
     void dequeue() {
-        if (empty()) {
-            throw std::out_of_range("Queue::dequeue: queue is empty");
-        }
-        data_[front_].~T();
-        front_ = advance(front_, 1);
-        --size_;
+        // TODO(estudiante): destruir el elemento en front_, avanzar front_
+        // una posición (con wraparound) y decrementar size_.
+        throw std::logic_error("Queue::dequeue: no implementado");
     }
 
     /**
@@ -202,27 +199,21 @@ class Queue : public Collection<T> {
 
     /** @brief Doubles capacity (or allocates 1 slot if currently empty), unrolling wraparound. */
     void grow() {
-        std::size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
-        T* new_data = allocate(new_capacity);
-        for (std::size_t i = 0; i < size_; ++i) {
-            std::size_t src = index_of(i);
-            new (new_data + i) T(std::move(data_[src]));
-            data_[src].~T();
-        }
-        deallocate(data_);
-        data_ = new_data;
-        capacity_ = new_capacity;
-        front_ = 0;
+        // TODO(estudiante): asignar un buffer nuevo del doble de capacidad
+        // (o 1 si capacity_ es 0), copiar/mover los elementos existentes
+        // "desenrollando" el wraparound (empezando en el índice 0 del nuevo
+        // buffer), destruirlos en el viejo, liberar el viejo buffer y
+        // actualizar data_/capacity_/front_ (front_ vuelve a 0).
+        throw std::logic_error("Queue::grow: no implementado");
     }
 
     template <typename U>
     void enqueue_impl(U&& value) {
-        if (size_ == capacity_) {
-            grow();
-        }
-        std::size_t back_index = advance(front_, size_);
-        new (data_ + back_index) T(std::forward<U>(value));
-        ++size_;
+        // TODO(estudiante): si el buffer está lleno (size_ == capacity_),
+        // llamar a grow(); luego construir value en la posición lógica
+        // "back" (índice físico advance(front_, size_)) e incrementar size_.
+        (void)value;
+        throw std::logic_error("Queue::enqueue: no implementado");
     }
 };
 

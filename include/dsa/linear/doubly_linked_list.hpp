@@ -110,8 +110,17 @@ class DoublyLinkedList : public Collection<T> {
     DoublyLinkedList() = default;
 
     DoublyLinkedList(std::initializer_list<T> values) {
+        // Built directly with raw pointers (not push_back) so this constructor
+        // keeps working even before push_back is implemented.
         for (const auto& value : values) {
-            push_back(value);
+            Node* node = new Node(value, tail_, nullptr);
+            if (tail_ != nullptr) {
+                tail_->next = node;
+            } else {
+                head_ = node;
+            }
+            tail_ = node;
+            ++size_;
         }
     }
 
@@ -166,96 +175,40 @@ class DoublyLinkedList : public Collection<T> {
     // --- Modifiers ---
 
     void push_front(const T& value) {
-        Node* node = new Node(value, nullptr, head_);
-        if (head_ != nullptr) {
-            head_->prev = node;
-        } else {
-            tail_ = node;
-        }
-        head_ = node;
-        ++size_;
+        // TODO(estudiante): crear un nuevo nodo con `value` enlazado antes de head_ (actualizar prev/next) y actualizar head_/tail_/size_.
+        (void)value;
+        throw std::logic_error("DoublyLinkedList::push_front: no implementado");
     }
 
     void push_back(const T& value) {
-        Node* node = new Node(value, tail_, nullptr);
-        if (tail_ != nullptr) {
-            tail_->next = node;
-        } else {
-            head_ = node;
-        }
-        tail_ = node;
-        ++size_;
+        // TODO(estudiante): crear un nuevo nodo con `value` enlazado después de tail_ (actualizar prev/next) y actualizar head_/tail_/size_.
+        (void)value;
+        throw std::logic_error("DoublyLinkedList::push_back: no implementado");
     }
 
     void pop_front() {
-        if (head_ == nullptr) {
-            throw std::out_of_range("DoublyLinkedList::pop_front: list is empty");
-        }
-        Node* old_head = head_;
-        head_ = head_->next;
-        if (head_ != nullptr) {
-            head_->prev = nullptr;
-        } else {
-            tail_ = nullptr;
-        }
-        delete old_head;
-        --size_;
+        // TODO(estudiante): eliminar el nodo head_ actual, liberar su memoria y actualizar head_/tail_/size_ (incluyendo el nuevo prev de head_).
+        throw std::logic_error("DoublyLinkedList::pop_front: no implementado");
     }
 
     void pop_back() {
-        if (tail_ == nullptr) {
-            throw std::out_of_range("DoublyLinkedList::pop_back: list is empty");
-        }
-        Node* old_tail = tail_;
-        tail_ = tail_->prev;
-        if (tail_ != nullptr) {
-            tail_->next = nullptr;
-        } else {
-            head_ = nullptr;
-        }
-        delete old_tail;
-        --size_;
+        // TODO(estudiante): eliminar el nodo tail_ actual, liberar su memoria y actualizar head_/tail_/size_ (incluyendo el nuevo next de tail_).
+        throw std::logic_error("DoublyLinkedList::pop_back: no implementado");
     }
 
     /** @brief Inserts `value` so it becomes the element at `index`. */
     void insert_at(std::size_t index, const T& value) {
-        if (index > size_) {
-            throw std::out_of_range("DoublyLinkedList::insert_at: index out of range");
-        }
-        if (index == 0) {
-            push_front(value);
-            return;
-        }
-        if (index == size_) {
-            push_back(value);
-            return;
-        }
-        Node* at = node_at(index);
-        Node* prev = at->prev;
-        Node* node = new Node(value, prev, at);
-        prev->next = node;
-        at->prev = node;
-        ++size_;
+        // TODO(estudiante): insertar `value` de modo que quede en la posición `index`, actualizando prev/next de los nodos vecinos (casos especiales: index == 0 e index == size_).
+        (void)index;
+        (void)value;
+        throw std::logic_error("DoublyLinkedList::insert_at: no implementado");
     }
 
     /** @brief Removes the element located at `index`. */
     void erase_at(std::size_t index) {
-        if (index >= size_) {
-            throw std::out_of_range("DoublyLinkedList::erase_at: index out of range");
-        }
-        Node* target = node_at(index);
-        if (target->prev != nullptr) {
-            target->prev->next = target->next;
-        } else {
-            head_ = target->next;
-        }
-        if (target->next != nullptr) {
-            target->next->prev = target->prev;
-        } else {
-            tail_ = target->prev;
-        }
-        delete target;
-        --size_;
+        // TODO(estudiante): eliminar el nodo en la posición `index`, reenlazando prev/next de sus vecinos y actualizando head_/tail_/size_ si corresponde.
+        (void)index;
+        throw std::logic_error("DoublyLinkedList::erase_at: no implementado");
     }
 
     // --- Accessors ---
@@ -342,8 +295,17 @@ class DoublyLinkedList : public Collection<T> {
     }
 
     void copy_from(const DoublyLinkedList& other) {
+        // Built directly with raw pointers (not push_back) so copy/move keep
+        // working even before push_back is implemented.
         for (const auto& value : other) {
-            push_back(value);
+            Node* node = new Node(value, tail_, nullptr);
+            if (tail_ != nullptr) {
+                tail_->next = node;
+            } else {
+                head_ = node;
+            }
+            tail_ = node;
+            ++size_;
         }
     }
 

@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <functional>
 #include <optional>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -57,17 +58,13 @@ class HashMap {
      * overwritten.
      */
     bool insert(const Key& key, const Value& value) {
-        maybe_rehash();
-        bucket_type& bucket = buckets_[bucket_index(key)];
-        for (auto& kv : bucket) {
-            if (kv.first == key) {
-                kv.second = value;
-                return false;
-            }
-        }
-        bucket.emplace_back(key, value);
-        ++size_;
-        return true;
+        (void)key;
+        (void)value;
+        // TODO(estudiante): si `key` ya existe, sobrescribe su valor y
+        // devuelve false; si no, agrégala al bucket correspondiente,
+        // incrementa size_ y devuelve true. No olvides llamar a
+        // maybe_rehash() antes de insertar.
+        throw std::logic_error("HashMap::insert: no implementado");
     }
 
     /**
@@ -75,32 +72,29 @@ class HashMap {
      * entry for it if it does not already exist (like `std::unordered_map`).
      */
     Value& operator[](const Key& key) {
-        maybe_rehash();
-        bucket_type& bucket = buckets_[bucket_index(key)];
-        for (auto& kv : bucket) {
-            if (kv.first == key) return kv.second;
-        }
-        bucket.emplace_back(key, Value{});
-        ++size_;
-        return bucket.back().second;
+        (void)key;
+        // TODO(estudiante): si `key` ya existe, devuelve una referencia a su
+        // valor; si no, crea una entrada con Value{} en el bucket
+        // correspondiente, incrementa size_ y devuelve una referencia a
+        // ella. No olvides llamar a maybe_rehash() antes de insertar.
+        throw std::logic_error("HashMap::operator[]: no implementado");
     }
 
     /** @brief Returns a pointer to the value for `key`, or nullptr if absent. */
     Value* find(const Key& key) {
-        bucket_type& bucket = buckets_[bucket_index(key)];
-        for (auto& kv : bucket) {
-            if (kv.first == key) return &kv.second;
-        }
-        return nullptr;
+        (void)key;
+        // TODO(estudiante): recorre el bucket correspondiente a `key` y
+        // devuelve un puntero a su valor si lo encuentras, o nullptr si no
+        // está presente.
+        throw std::logic_error("HashMap::find: no implementado");
     }
 
     /** @brief Const overload of find(). */
     const Value* find(const Key& key) const {
-        const bucket_type& bucket = buckets_[bucket_index(key)];
-        for (const auto& kv : bucket) {
-            if (kv.first == key) return &kv.second;
-        }
-        return nullptr;
+        (void)key;
+        // TODO(estudiante): igual que la sobrecarga no-const, pero sobre un
+        // bucket const y devolviendo un puntero const.
+        throw std::logic_error("HashMap::find: no implementado");
     }
 
     /** @brief Returns a copy of the value for `key`, if present. */
@@ -118,15 +112,11 @@ class HashMap {
      * @return true if an entry was removed, false if `key` was not found.
      */
     bool erase(const Key& key) {
-        bucket_type& bucket = buckets_[bucket_index(key)];
-        for (auto it = bucket.begin(); it != bucket.end(); ++it) {
-            if (it->first == key) {
-                bucket.erase(it);
-                --size_;
-                return true;
-            }
-        }
-        return false;
+        (void)key;
+        // TODO(estudiante): busca `key` en su bucket; si la encuentras,
+        // elimínala del vector, decrementa size_ y devuelve true. Si no
+        // está presente, devuelve false.
+        throw std::logic_error("HashMap::erase: no implementado");
     }
 
     /** @brief Number of key-value entries stored in the map. */
@@ -154,14 +144,11 @@ class HashMap {
     std::size_t bucket_index(const Key& key) const { return Hash{}(key) % buckets_.size(); }
 
     void maybe_rehash() {
-        if (load_factor() <= kMaxLoadFactor) return;
-        std::vector<bucket_type> old_buckets = std::move(buckets_);
-        buckets_.assign(old_buckets.size() * 2, bucket_type{});
-        for (const bucket_type& bucket : old_buckets) {
-            for (const auto& kv : bucket) {
-                buckets_[bucket_index(kv.first)].push_back(kv);
-            }
-        }
+        // TODO(estudiante): si load_factor() no supera kMaxLoadFactor, no
+        // hagas nada. Si lo supera, duplica el número de buckets y
+        // reinserta cada entrada existente en el nuevo arreglo de buckets
+        // (recalculando su índice con el nuevo bucket_count).
+        throw std::logic_error("HashMap::maybe_rehash: no implementado");
     }
 
     std::vector<bucket_type> buckets_;
