@@ -13,10 +13,10 @@ namespace {
 
 using dsa::BinaryHeap;
 
-// Drains a heap with repeated extract_top() and returns the resulting
-// sequence. For a max-heap this must come out non-increasing; for a
-// min-heap, non-decreasing. Also destroys the heap in the process, which
-// is fine since every test builds its own instance.
+// Vacía un montículo con extract_top() repetido y devuelve la secuencia
+// resultante. Para un max-heap debe salir no creciente; para un min-heap,
+// no decreciente. También destruye el montículo en el proceso, lo cual
+// está bien porque cada prueba construye su propia instancia.
 template <typename T, typename Compare>
 std::vector<T> drain(BinaryHeap<T, Compare>& heap) {
     std::vector<T> out;
@@ -28,7 +28,7 @@ std::vector<T> drain(BinaryHeap<T, Compare>& heap) {
 }
 
 // ---------------------------------------------------------------------
-// Construction / empty state
+// Construcción / estado vacío
 // ---------------------------------------------------------------------
 
 TEST(BinaryHeapConstruction, DefaultConstructedIsEmpty) {
@@ -58,7 +58,7 @@ TEST(BinaryHeapConstruction, SingleElement) {
 }
 
 // ---------------------------------------------------------------------
-// Max-heap ordering (default Compare = std::less<T>)
+// Orden de max-heap (Compare por defecto = std::less<T>)
 // ---------------------------------------------------------------------
 
 TEST(BinaryHeapMaxHeap, InsertInIncreasingOrderExtractsDescending) {
@@ -113,9 +113,9 @@ TEST(BinaryHeapMaxHeap, ManyElementsMaintainHeapPropertyThroughoutMixedOps) {
         values.push_back(value);
         heap.insert(value);
     }
-    // Interleave a few extractions to exercise sift_down mid-stream, then
-    // drain the rest; the overall multiset of extracted elements must
-    // still be exactly the sorted input.
+    // Intercala algunas extracciones para ejercitar sift_down a mitad de
+    // camino, luego vacía el resto; el multiconjunto total de elementos
+    // extraídos debe seguir siendo exactamente la entrada ordenada.
     std::vector<int> extracted;
     for (int i = 0; i < 50; ++i) {
         extracted.push_back(heap.extract_top());
@@ -129,7 +129,7 @@ TEST(BinaryHeapMaxHeap, ManyElementsMaintainHeapPropertyThroughoutMixedOps) {
 }
 
 // ---------------------------------------------------------------------
-// Min-heap ordering (Compare = std::greater<T>)
+// Orden de min-heap (Compare = std::greater<T>)
 // ---------------------------------------------------------------------
 
 TEST(BinaryHeapMinHeap, InsertInArbitraryOrderExtractsAscending) {
@@ -151,7 +151,7 @@ TEST(BinaryHeapMinHeap, TopReflectsCurrentMinimum) {
 }
 
 // ---------------------------------------------------------------------
-// build_heap via the iterator-range constructor
+// build_heap mediante el constructor de rango de iteradores
 // ---------------------------------------------------------------------
 
 TEST(BinaryHeapBuildHeap, FromUnsortedVectorMaxHeap) {
@@ -215,7 +215,7 @@ TEST(BinaryHeapClear, HeapIsUsableAfterClear) {
 }
 
 // ---------------------------------------------------------------------
-// Rule of five: copy / move
+// Regla de los cinco: copia / movimiento
 // ---------------------------------------------------------------------
 
 TEST(BinaryHeapRuleOfFive, CopyConstructorIsDeep) {
@@ -279,7 +279,7 @@ TEST(BinaryHeapRuleOfFive, SwapExchangesContents) {
 }
 
 // ---------------------------------------------------------------------
-// Non-trivial element type (std::string)
+// Tipo de elemento no trivial (std::string)
 // ---------------------------------------------------------------------
 
 TEST(BinaryHeapStringType, OrdersLexicographically) {

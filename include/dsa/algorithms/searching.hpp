@@ -9,10 +9,11 @@ namespace dsa {
 namespace detail {
 
 /**
- * @brief Recursive binary search helper that keeps track of the original
- * end iterator (`sentinel`) separately from the current subrange's `last`,
- * since narrowing the search to the left half shrinks `last` but must still
- * report "not found" as the caller's original end iterator.
+ * @brief Auxiliar recursivo de busqueda binaria que mantiene el iterador de
+ * fin original (`sentinel`) separado del `last` del subrango actual, ya que
+ * al reducir la busqueda a la mitad izquierda `last` se achica, pero el
+ * caso "no encontrado" debe seguir reportandose con el iterador de fin
+ * original del llamador.
  */
 template <typename RandomIt, typename T>
 RandomIt binary_search_recursive_impl(RandomIt first, RandomIt last, RandomIt sentinel,
@@ -35,18 +36,19 @@ RandomIt binary_search_recursive_impl(RandomIt first, RandomIt last, RandomIt se
 }  // namespace detail
 
 /**
- * @brief Searches [first, last) for the first element equal to `value`.
+ * @brief Busca en [first, last) el primer elemento igual a `value`.
  *
- * Works on any input iterator; makes no assumptions about ordering.
+ * Funciona con cualquier iterador de entrada; no asume ningun orden.
  *
- * @tparam InputIt Input iterator type.
- * @tparam T Value type, compared with operator==.
- * @param first Iterator to the beginning of the range.
- * @param last Iterator to one-past-the-end of the range.
- * @param value Value to search for.
- * @return Iterator to the first matching element, or `last` if not found.
+ * @tparam InputIt Tipo de iterador de entrada.
+ * @tparam T Tipo del valor, comparado con operator==.
+ * @param first Iterador al comienzo del rango.
+ * @param last Iterador a una posicion despues del final del rango.
+ * @param value Valor a buscar.
+ * @return Iterador al primer elemento coincidente, o `last` si no se
+ * encuentra.
  *
- * Complexity: O(n) comparisons in the worst case; O(1) best case.
+ * Complejidad: O(n) comparaciones en el peor caso; O(1) en el mejor caso.
  */
 template <typename InputIt, typename T>
 InputIt linear_search(InputIt first, InputIt last, const T& value) {
@@ -57,21 +59,22 @@ InputIt linear_search(InputIt first, InputIt last, const T& value) {
 }
 
 /**
- * @brief Searches the sorted range [first, last) for `value` using iterative
- * binary search.
+ * @brief Busca `value` en el rango ordenado [first, last) usando busqueda
+ * binaria iterativa.
  *
- * Precondition: [first, last) must be sorted in ascending order according
- * to operator< (the same order std::sort/dsa sorting functions produce by
- * default). Passing an unsorted range yields undefined/incorrect results.
+ * Precondicion: [first, last) debe estar ordenado ascendentemente segun
+ * operator< (el mismo orden que producen por defecto std::sort y las
+ * funciones de ordenamiento de dsa). Pasar un rango no ordenado produce
+ * resultados indefinidos/incorrectos.
  *
- * @tparam RandomIt Random access iterator type.
- * @tparam T Value type, compared with operator<.
- * @param first Iterator to the beginning of the sorted range.
- * @param last Iterator to one-past-the-end of the sorted range.
- * @param value Value to search for.
- * @return Iterator to a matching element, or `last` if not found.
+ * @tparam RandomIt Tipo de iterador de acceso aleatorio.
+ * @tparam T Tipo del valor, comparado con operator<.
+ * @param first Iterador al comienzo del rango ordenado.
+ * @param last Iterador a una posicion despues del final del rango ordenado.
+ * @param value Valor a buscar.
+ * @return Iterador a un elemento coincidente, o `last` si no se encuentra.
  *
- * Complexity: O(log n) comparisons.
+ * Complejidad: O(log n) comparaciones.
  */
 template <typename RandomIt, typename T>
 RandomIt binary_search(RandomIt /*first*/, RandomIt /*last*/, const T& /*value*/) {
@@ -81,20 +84,20 @@ RandomIt binary_search(RandomIt /*first*/, RandomIt /*last*/, const T& /*value*/
 }
 
 /**
- * @brief Recursive variant of binary search, provided as a pedagogical
- * counterpart to the iterative dsa::binary_search: same O(log n) complexity
- * and precondition (sorted range), but relies on the call stack (O(log n)
- * extra space) instead of a loop, which is useful for comparing the two
- * styles.
+ * @brief Variante recursiva de la busqueda binaria, ofrecida como
+ * contraparte pedagogica de la version iterativa dsa::binary_search: misma
+ * complejidad O(log n) y misma precondicion (rango ordenado), pero se apoya
+ * en la pila de llamadas (O(log n) de espacio extra) en lugar de un bucle,
+ * lo cual es util para comparar ambos estilos.
  *
- * Precondition: [first, last) must be sorted in ascending order.
+ * Precondicion: [first, last) debe estar ordenado ascendentemente.
  *
- * @tparam RandomIt Random access iterator type.
- * @tparam T Value type, compared with operator<.
- * @param first Iterator to the beginning of the sorted range.
- * @param last Iterator to one-past-the-end of the sorted range.
- * @param value Value to search for.
- * @return Iterator to a matching element, or `last` if not found.
+ * @tparam RandomIt Tipo de iterador de acceso aleatorio.
+ * @tparam T Tipo del valor, comparado con operator<.
+ * @param first Iterador al comienzo del rango ordenado.
+ * @param last Iterador a una posicion despues del final del rango ordenado.
+ * @param value Valor a buscar.
+ * @return Iterador a un elemento coincidente, o `last` si no se encuentra.
  */
 template <typename RandomIt, typename T>
 RandomIt binary_search_recursive(RandomIt /*first*/, RandomIt /*last*/, const T& /*value*/) {

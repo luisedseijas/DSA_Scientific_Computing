@@ -11,22 +11,24 @@
 namespace dsa {
 
 /**
- * @brief A dynamic array (resizable, contiguous-storage array), similar in
- * spirit to std::vector.
+ * @brief Un arreglo dinámico (arreglo redimensionable de almacenamiento
+ * contiguo), similar en espíritu a std::vector.
  *
- * DynamicArray owns a raw, heap-allocated buffer of capacity `capacity_`
- * that stores `size_` constructed elements at the front. When the buffer
- * fills up, a new buffer with double the capacity is allocated and the
- * existing elements are moved (or copied) into it. This geometric growth
- * strategy is what gives push_back its amortized O(1) cost: see
- * docs/guides/01_dynamic_array.md for the full amortized-analysis argument.
+ * DynamicArray es dueño de un buffer crudo, asignado en el heap, de
+ * capacidad `capacity_` que almacena `size_` elementos construidos al
+ * frente. Cuando el buffer se llena, se asigna un nuevo buffer con el
+ * doble de capacidad y los elementos existentes se mueven (o copian) a
+ * él. Esta estrategia de crecimiento geométrico es lo que le da a
+ * push_back su costo amortizado O(1): ver docs/guides/01_dynamic_array.md
+ * para el argumento completo de análisis amortizado.
  *
- * The class intentionally manages memory manually with `new`/`delete`
- * instead of wrapping a std::vector, so that students can see exactly how
- * a dynamic array is implemented under the hood (allocation, placement of
- * elements, growth, and the Rule of Five).
+ * La clase administra la memoria manualmente con `new`/`delete` a
+ * propósito, en lugar de envolver un std::vector, para que los
+ * estudiantes puedan ver exactamente cómo se implementa un arreglo
+ * dinámico por dentro (asignación, colocación de elementos, crecimiento
+ * y la Regla de los Cinco).
  *
- * @tparam T Element type. Must be move or copy constructible.
+ * @tparam T Tipo del elemento. Debe ser move o copy constructible.
  */
 template <typename T>
 class DynamicArray : public Collection<T> {
@@ -37,14 +39,14 @@ class DynamicArray : public Collection<T> {
     using iterator = T*;
     using const_iterator = const T*;
 
-    /** @brief Constructs an empty DynamicArray with no allocated storage. */
+    /** @brief Construye un DynamicArray vacío sin almacenamiento asignado. */
     DynamicArray() noexcept : data_(nullptr), size_(0), capacity_(0) {}
 
     /**
-     * @brief Constructs an empty DynamicArray that has already reserved
-     * storage for `initial_capacity` elements.
-     * @param initial_capacity Number of elements worth of storage to
-     * pre-allocate.
+     * @brief Construye un DynamicArray vacío que ya reservó
+     * almacenamiento para `initial_capacity` elementos.
+     * @param initial_capacity Número de elementos de almacenamiento a
+     * preasignar.
      */
     explicit DynamicArray(std::size_t initial_capacity) : data_(nullptr), size_(0), capacity_(0) {
         if (initial_capacity > 0) {
@@ -53,7 +55,7 @@ class DynamicArray : public Collection<T> {
         }
     }
 
-    /** @brief Copy constructor. Performs a deep copy of `other`'s elements. */
+    /** @brief Constructor de copia. Realiza una copia profunda de los elementos de `other`. */
     DynamicArray(const DynamicArray& other) : data_(nullptr), size_(0), capacity_(0) {
         if (other.capacity_ > 0) {
             data_ = allocate(other.capacity_);
@@ -65,7 +67,7 @@ class DynamicArray : public Collection<T> {
         size_ = other.size_;
     }
 
-    /** @brief Move constructor. Steals `other`'s buffer, leaving it empty. */
+    /** @brief Constructor de movimiento. Roba el buffer de `other`, dejándolo vacío. */
     DynamicArray(DynamicArray&& other) noexcept
         : data_(other.data_), size_(other.size_), capacity_(other.capacity_) {
         other.data_ = nullptr;
@@ -73,7 +75,7 @@ class DynamicArray : public Collection<T> {
         other.capacity_ = 0;
     }
 
-    /** @brief Copy assignment operator (copy-and-swap). */
+    /** @brief Operador de asignación por copia (copy-and-swap). */
     DynamicArray& operator=(const DynamicArray& other) {
         if (this != &other) {
             DynamicArray tmp(other);
@@ -82,7 +84,7 @@ class DynamicArray : public Collection<T> {
         return *this;
     }
 
-    /** @brief Move assignment operator. */
+    /** @brief Operador de asignación por movimiento. */
     DynamicArray& operator=(DynamicArray&& other) noexcept {
         if (this != &other) {
             destroy_all();
@@ -97,116 +99,119 @@ class DynamicArray : public Collection<T> {
         return *this;
     }
 
-    /** @brief Destroys all elements and releases the underlying storage. */
+    /** @brief Destruye todos los elementos y libera el almacenamiento subyacente. */
     ~DynamicArray() override {
         destroy_all();
         deallocate(data_);
     }
 
-    /** @brief Number of elements currently stored. */
+    /** @brief Número de elementos actualmente almacenados. */
     std::size_t size() const noexcept override { return size_; }
 
-    /** @brief Number of elements the current buffer can hold without growing. */
+    /** @brief Número de elementos que el buffer actual puede contener sin crecer. */
     std::size_t capacity() const noexcept { return capacity_; }
 
-    /** @brief Whether the array contains no elements. */
+    /** @brief Indica si el arreglo no contiene elementos. */
     bool empty() const noexcept override { return size_ == 0; }
 
-    /** @brief Destroys every element, leaving size() == 0. Capacity is kept. */
+    /** @brief Destruye cada elemento, dejando size() == 0. Se conserva la capacidad. */
     void clear() override {
         destroy_all();
         size_ = 0;
     }
 
     /**
-     * @brief Appends `value` at the end, growing the buffer if necessary.
-     * Amortized O(1).
+     * @brief Agrega `value` al final, creciendo el buffer si es necesario.
+     * Amortizado O(1).
      */
     void push_back(const T& value) { emplace_back_impl(value); }
 
-    /** @brief Appends `value` at the end via move. Amortized O(1). */
+    /** @brief Agrega `value` al final mediante movimiento. Amortizado O(1). */
     void push_back(T&& value) { emplace_back_impl(std::move(value)); }
 
     /**
-     * @brief Removes the last element.
-     * @throws std::out_of_range if the array is empty.
+     * @brief Elimina el último elemento.
+     * @throws std::out_of_range si el arreglo está vacío.
      */
     void pop_back() {
-        // TODO(estudiante): remove the last element (check for emptiness,
-        // decrement size_, and call the destructor on the removed slot).
+        // TODO(estudiante): eliminar el último elemento (verificar que no
+        // esté vacío, decrementar size_ y llamar al destructor en el slot
+        // eliminado).
         throw std::logic_error("DynamicArray::pop_back: no implementado");
     }
 
     /**
-     * @brief Inserts `value` at `index`, shifting subsequent elements right.
-     * O(n) in the worst case.
-     * @param index Position at which to insert; must satisfy 0 <= index <=
+     * @brief Inserta `value` en `index`, desplazando los elementos
+     * siguientes a la derecha. O(n) en el peor caso.
+     * @param index Posición en la que insertar; debe cumplir 0 <= index <=
      * size().
-     * @throws std::out_of_range if index > size().
+     * @throws std::out_of_range si index > size().
      */
     void insert(std::size_t index, const T& value) {
         (void)index;
         (void)value;
-        // TODO(estudiante): insert `value` at `index`, growing the buffer if
-        // necessary and shifting elements [index, size_) one slot to the
-        // right so no live element is overwritten before it is read.
+        // TODO(estudiante): insertar `value` en `index`, creciendo el
+        // buffer si es necesario y desplazando los elementos [index,
+        // size_) un slot a la derecha para que ningún elemento vivo se
+        // sobrescriba antes de leerse.
         throw std::logic_error("DynamicArray::insert: no implementado");
     }
 
     /**
-     * @brief Removes the element at `index`, shifting subsequent elements
-     * left. O(n) in the worst case.
-     * @throws std::out_of_range if index >= size().
+     * @brief Elimina el elemento en `index`, desplazando los elementos
+     * siguientes a la izquierda. O(n) en el peor caso.
+     * @throws std::out_of_range si index >= size().
      */
     void erase(std::size_t index) {
         (void)index;
-        // TODO(estudiante): remove the element at `index`, shifting
-        // subsequent elements one slot to the left and destroying the
-        // now-unused last slot.
+        // TODO(estudiante): eliminar el elemento en `index`, desplazando
+        // los elementos siguientes un slot a la izquierda y destruyendo
+        // el último slot que queda sin usar.
         throw std::logic_error("DynamicArray::erase: no implementado");
     }
 
-    /** @brief Unchecked element access. Behavior is undefined if out of range. */
+    /** @brief Acceso a elemento sin verificación. Comportamiento indefinido si está fuera de rango.
+     */
     reference operator[](std::size_t index) { return data_[index]; }
 
-    /** @brief Unchecked const element access. */
+    /** @brief Acceso const a elemento sin verificación. */
     const_reference operator[](std::size_t index) const { return data_[index]; }
 
     /**
-     * @brief Bounds-checked element access.
-     * @throws std::out_of_range if index >= size().
+     * @brief Acceso a elemento con verificación de límites.
+     * @throws std::out_of_range si index >= size().
      */
     reference at(std::size_t index) {
         if (index >= size_) {
-            throw std::out_of_range("DynamicArray::at: index out of range");
+            throw std::out_of_range("DynamicArray::at: índice fuera de rango");
         }
         return data_[index];
     }
 
-    /** @brief Bounds-checked const element access. */
+    /** @brief Acceso const a elemento con verificación de límites. */
     const_reference at(std::size_t index) const {
         if (index >= size_) {
-            throw std::out_of_range("DynamicArray::at: index out of range");
+            throw std::out_of_range("DynamicArray::at: índice fuera de rango");
         }
         return data_[index];
     }
 
-    /** @brief Reference to the first element. Undefined behavior if empty. */
+    /** @brief Referencia al primer elemento. Comportamiento indefinido si está vacío. */
     reference front() { return data_[0]; }
-    /** @brief Const reference to the first element. */
+    /** @brief Referencia const al primer elemento. */
     const_reference front() const { return data_[0]; }
 
-    /** @brief Reference to the last element. Undefined behavior if empty. */
+    /** @brief Referencia al último elemento. Comportamiento indefinido si está vacío. */
     reference back() { return data_[size_ - 1]; }
-    /** @brief Const reference to the last element. */
+    /** @brief Referencia const al último elemento. */
     const_reference back() const { return data_[size_ - 1]; }
 
-    /** @brief Pointer to the underlying contiguous storage. */
+    /** @brief Puntero al almacenamiento contiguo subyacente. */
     T* data() noexcept { return data_; }
-    /** @brief Const pointer to the underlying contiguous storage. */
+    /** @brief Puntero const al almacenamiento contiguo subyacente. */
     const T* data() const noexcept { return data_; }
 
-    // -- Iterators, enabling range-for and <algorithm> compatibility. --------
+    // -- Iteradores, que habilitan range-for y compatibilidad con <algorithm>. --------
 
     iterator begin() noexcept { return data_; }
     iterator end() noexcept { return data_ + size_; }
@@ -215,7 +220,7 @@ class DynamicArray : public Collection<T> {
     const_iterator cbegin() const noexcept { return data_; }
     const_iterator cend() const noexcept { return data_ + size_; }
 
-    /** @brief Swaps contents with `other` in O(1). */
+    /** @brief Intercambia el contenido con `other` en O(1). */
     void swap(DynamicArray& other) noexcept {
         std::swap(data_, other.data_);
         std::swap(size_, other.size_);
@@ -237,20 +242,21 @@ class DynamicArray : public Collection<T> {
         }
     }
 
-    /** @brief Doubles capacity (or allocates 1 slot if currently empty). */
+    /** @brief Duplica la capacidad (o asigna 1 slot si actualmente está vacío). */
     void grow() {
-        // TODO(estudiante): allocate a new buffer with double the current
-        // capacity (or 1 if capacity_ is 0), move-construct the existing
-        // elements into it, destroy the old elements, deallocate the old
-        // buffer, and update data_/capacity_.
+        // TODO(estudiante): asignar un nuevo buffer con el doble de la
+        // capacidad actual (o 1 si capacity_ es 0), mover los elementos
+        // existentes a él, destruir los elementos antiguos, liberar el
+        // buffer antiguo y actualizar data_/capacity_.
         throw std::logic_error("DynamicArray::grow: no implementado");
     }
 
     template <typename U>
     void emplace_back_impl(U&& value) {
         (void)value;
-        // TODO(estudiante): grow the buffer if it is full, then
-        // construct `value` in place at data_[size_] and increment size_.
+        // TODO(estudiante): crecer el buffer si está lleno, luego
+        // construir `value` en el lugar en data_[size_] e incrementar
+        // size_.
         throw std::logic_error("DynamicArray::push_back: no implementado");
     }
 };

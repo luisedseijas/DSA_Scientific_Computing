@@ -11,58 +11,62 @@
 namespace dsa {
 
 /**
- * @brief Binary heap: a complete binary tree stored implicitly in a
- * contiguous array, kept ordered by `Compare`.
+ * @brief Montículo binario (binary heap): un árbol binario completo
+ * almacenado implícitamente en un arreglo contiguo, mantenido ordenado
+ * según `Compare`.
  *
- * The tree is "complete" (every level full except possibly the last, which
- * fills left to right), which is exactly what lets it be represented
- * without pointers: for a node at index `i`, its parent lives at
- * `(i - 1) / 2` and its children at `2*i + 1` and `2*i + 2`. See
- * docs/guides/05_heaps.md for the full derivation and complexity analysis.
+ * El árbol es "completo" (cada nivel está lleno excepto posiblemente el
+ * último, que se llena de izquierda a derecha), lo cual es precisamente lo
+ * que permite representarlo sin punteros: para un nodo en el índice `i`,
+ * su padre está en `(i - 1) / 2` y sus hijos en `2*i + 1` y `2*i + 2`. Ver
+ * docs/guides/05_heaps.md para la derivación completa y el análisis de
+ * complejidad.
  *
- * With the default `std::less<T>`, `Compare(child, parent)` being false
- * for every node gives a *max-heap* (the convention `std::priority_queue`
- * also uses): the element at index 0 is always the largest according to
- * `Compare`. Passing `std::greater<T>` flips this into a min-heap. In
- * general the root is the element no other element is "less" than under
- * `Compare` — i.e. the maximum of the order `Compare` defines.
+ * Con el `std::less<T>` por defecto, que `Compare(hijo, padre)` sea falso
+ * para cada nodo da como resultado un *max-heap* (la convención que
+ * también usa `std::priority_queue`): el elemento en el índice 0 es
+ * siempre el mayor según `Compare`. Pasar `std::greater<T>` invierte esto
+ * a un min-heap. En general, la raíz es el elemento que ningún otro
+ * elemento supera bajo `Compare` — es decir, el máximo del orden que
+ * `Compare` define.
  *
- * Storage is a raw, heap-allocated buffer managed by hand (`new`/`delete`
- * at the byte level, placement-new for construction) instead of
- * std::vector, in the same spirit as DynamicArray: the point is to make
- * the underlying array mechanics visible to students, not to reimplement
- * std::vector.
+ * El almacenamiento es un buffer crudo reservado en el heap y gestionado
+ * manualmente (`new`/`delete` a nivel de bytes, placement-new para la
+ * construcción) en lugar de std::vector, en el mismo espíritu que
+ * DynamicArray: el objetivo es hacer visible a los estudiantes la mecánica
+ * subyacente del arreglo, no reimplementar std::vector.
  *
- * @tparam T Element type. Must be move or copy constructible.
- * @tparam Compare Strict-weak-ordering functor; `Compare(a, b)` true means
- * "a should end up below b in the heap". Defaults to std::less<T>, giving
- * a max-heap.
+ * @tparam T Tipo del elemento. Debe ser move o copy constructible.
+ * @tparam Compare Functor de orden estricto débil; `Compare(a, b)`
+ * verdadero significa "a debería terminar por debajo de b en el
+ * montículo". Por defecto std::less<T>, dando un max-heap.
  */
 template <typename T, typename Compare = std::less<T>>
 class BinaryHeap : public Collection<T> {
    public:
-    /** @brief Constructs an empty heap with no allocated storage. */
+    /** @brief Construye un montículo vacío sin almacenamiento reservado. */
     BinaryHeap() noexcept : data_(nullptr), size_(0), capacity_(0), compare_() {}
 
-    /** @brief Constructs an empty heap with a custom comparator instance. */
+    /** @brief Construye un montículo vacío con una instancia de comparador personalizada. */
     explicit BinaryHeap(const Compare& compare)
         : data_(nullptr), size_(0), capacity_(0), compare_(compare) {}
 
     /**
-     * @brief Builds a heap from the range `[first, last)` in O(n).
+     * @brief Construye un montículo a partir del rango `[first, last)` en O(n).
      *
-     * This is Floyd's build-heap algorithm: copy the elements in as-is,
-     * then sift down every internal node starting from the last one and
-     * walking back to the root. It is faster than inserting the elements
-     * one at a time (which would cost O(n log n)) because most nodes in a
-     * complete tree are near the bottom, where a sift-down does almost no
-     * work; the O(n) bound is proven in docs/guides/05_heaps.md via a
-     * geometric-series argument.
+     * Este es el algoritmo de construcción de montículos de Floyd: se
+     * copian los elementos tal cual, y luego se hunde (sift down) cada
+     * nodo interno empezando por el último y retrocediendo hasta la raíz.
+     * Es más rápido que insertar los elementos uno a uno (lo cual costaría
+     * O(n log n)) porque la mayoría de los nodos de un árbol completo
+     * están cerca de la parte inferior, donde un sift-down casi no hace
+     * trabajo; la cota O(n) se demuestra en docs/guides/05_heaps.md
+     * mediante un argumento de serie geométrica.
      *
-     * @tparam InputIt Input iterator type.
-     * @param first Iterator to the first element.
-     * @param last Iterator one past the last element.
-     * @param compare Comparator instance to use.
+     * @tparam InputIt Tipo de iterador de entrada.
+     * @param first Iterador al primer elemento.
+     * @param last Iterador una posición después del último elemento.
+     * @param compare Instancia de comparador a usar.
      */
     template <typename InputIt>
     BinaryHeap(InputIt first, InputIt last, const Compare& compare = Compare())
@@ -77,7 +81,7 @@ class BinaryHeap : public Collection<T> {
         build_heap();
     }
 
-    /** @brief Copy constructor. Performs a deep copy of `other`'s elements. */
+    /** @brief Constructor de copia. Realiza una copia profunda de los elementos de `other`. */
     BinaryHeap(const BinaryHeap& other)
         : data_(nullptr), size_(0), capacity_(0), compare_(other.compare_) {
         if (other.capacity_ > 0) {
@@ -90,7 +94,7 @@ class BinaryHeap : public Collection<T> {
         size_ = other.size_;
     }
 
-    /** @brief Move constructor. Steals `other`'s buffer, leaving it empty. */
+    /** @brief Constructor de movimiento. Roba el buffer de `other`, dejándolo vacío. */
     BinaryHeap(BinaryHeap&& other) noexcept
         : data_(other.data_),
           size_(other.size_),
@@ -101,7 +105,7 @@ class BinaryHeap : public Collection<T> {
         other.capacity_ = 0;
     }
 
-    /** @brief Copy assignment operator (copy-and-swap). */
+    /** @brief Operador de asignación por copia (copy-and-swap). */
     BinaryHeap& operator=(const BinaryHeap& other) {
         if (this != &other) {
             BinaryHeap tmp(other);
@@ -110,7 +114,7 @@ class BinaryHeap : public Collection<T> {
         return *this;
     }
 
-    /** @brief Move assignment operator. */
+    /** @brief Operador de asignación por movimiento. */
     BinaryHeap& operator=(BinaryHeap&& other) noexcept {
         if (this != &other) {
             destroy_all();
@@ -126,53 +130,54 @@ class BinaryHeap : public Collection<T> {
         return *this;
     }
 
-    /** @brief Destroys all elements and releases the underlying storage. */
+    /** @brief Destruye todos los elementos y libera el almacenamiento subyacente. */
     ~BinaryHeap() override {
         destroy_all();
         deallocate(data_);
     }
 
-    /** @brief Number of elements currently stored. */
+    /** @brief Número de elementos almacenados actualmente. */
     std::size_t size() const noexcept override { return size_; }
 
-    /** @brief Whether the heap contains no elements. */
+    /** @brief Indica si el montículo no contiene elementos. */
     bool empty() const noexcept override { return size_ == 0; }
 
-    /** @brief Destroys every element, leaving size() == 0. Capacity is kept. */
+    /** @brief Destruye cada elemento, dejando size() == 0. Se conserva la capacidad. */
     void clear() override {
         destroy_all();
         size_ = 0;
     }
 
     /**
-     * @brief Inserts `value`, growing the buffer if necessary, and restores
-     * the heap invariant. O(log n) amortized.
+     * @brief Inserta `value`, agrandando el buffer si es necesario, y
+     * restaura el invariante del montículo. O(log n) amortizado.
      */
     void insert(const T& value) { insert_impl(value); }
 
-    /** @brief Inserts `value` via move. O(log n) amortized. */
+    /** @brief Inserta `value` mediante move. O(log n) amortizado. */
     void insert(T&& value) { insert_impl(std::move(value)); }
 
-    /** @brief Alias for insert(), matching the classic priority-queue API. */
+    /** @brief Alias de insert(), igualando la API clásica de cola de prioridad. */
     void push(const T& value) { insert(value); }
-    /** @brief Alias for insert(), matching the classic priority-queue API. */
+    /** @brief Alias de insert(), igualando la API clásica de cola de prioridad. */
     void push(T&& value) { insert(std::move(value)); }
 
     /**
-     * @brief Removes and returns the top element (the max under `Compare`,
-     * or the min if `Compare` is std::greater<T>). O(log n).
-     * @throws std::out_of_range if the heap is empty.
+     * @brief Elimina y devuelve el elemento superior (el máximo según
+     * `Compare`, o el mínimo si `Compare` es std::greater<T>). O(log n).
+     * @throws std::out_of_range si el montículo está vacío.
      */
     T extract_top() {
         if (empty()) {
-            throw std::out_of_range("BinaryHeap::extract_top: heap is empty");
+            throw std::out_of_range("BinaryHeap::extract_top: el montículo está vacío");
         }
         T top = std::move(data_[0]);
         --size_;
         if (size_ > 0) {
-            // Move the last element to the root, then let it sink to its
-            // rightful place. This keeps the tree complete (we only ever
-            // remove the very last slot) while restoring the heap order.
+            // Mueve el último elemento a la raíz y luego lo deja hundirse
+            // hasta su lugar correspondiente. Esto mantiene el árbol
+            // completo (solo se elimina la última posición) mientras se
+            // restaura el orden del montículo.
             data_[0] = std::move(data_[size_]);
         }
         data_[size_].~T();
@@ -182,27 +187,27 @@ class BinaryHeap : public Collection<T> {
         return top;
     }
 
-    /** @brief Alias for extract_top(), matching the classic priority-queue API. */
+    /** @brief Alias de extract_top(), igualando la API clásica de cola de prioridad. */
     T pop() { return extract_top(); }
 
     /**
-     * @brief Read-only access to the top element, without removing it.
-     * @throws std::out_of_range if the heap is empty.
+     * @brief Acceso de solo lectura al elemento superior, sin eliminarlo.
+     * @throws std::out_of_range si el montículo está vacío.
      */
     const T& top() const {
         if (empty()) {
-            throw std::out_of_range("BinaryHeap::top: heap is empty");
+            throw std::out_of_range("BinaryHeap::top: el montículo está vacío");
         }
         return data_[0];
     }
 
-    /** @brief Alias for top(), matching the classic priority-queue API. */
+    /** @brief Alias de top(), igualando la API clásica de cola de prioridad. */
     const T& peek() const { return top(); }
 
-    /** @brief Number of elements the current buffer can hold without growing. */
+    /** @brief Número de elementos que el buffer actual puede contener sin crecer. */
     std::size_t capacity() const noexcept { return capacity_; }
 
-    /** @brief Swaps contents with `other` in O(1). */
+    /** @brief Intercambia el contenido con `other` en O(1). */
     void swap(BinaryHeap& other) noexcept {
         std::swap(data_, other.data_);
         std::swap(size_, other.size_);
@@ -226,7 +231,7 @@ class BinaryHeap : public Collection<T> {
         }
     }
 
-    /** @brief Doubles capacity (or allocates 1 slot if currently empty). */
+    /** @brief Duplica la capacidad (o reserva 1 posición si está vacío). */
     void grow() {
         std::size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
         T* new_data = allocate(new_capacity);
@@ -249,22 +254,23 @@ class BinaryHeap : public Collection<T> {
         sift_up(size_ - 1);
     }
 
-    /** @brief Index of the parent of node `i`. Undefined if i == 0. */
+    /** @brief Índice del padre del nodo `i`. Indefinido si i == 0. */
     static std::size_t parent_of(std::size_t i) { return (i - 1) / 2; }
 
-    /** @brief Index of the left child of node `i`. */
+    /** @brief Índice del hijo izquierdo del nodo `i`. */
     static std::size_t left_of(std::size_t i) { return 2 * i + 1; }
 
-    /** @brief Index of the right child of node `i`. */
+    /** @brief Índice del hijo derecho del nodo `i`. */
     static std::size_t right_of(std::size_t i) { return 2 * i + 2; }
 
     /**
-     * @brief Moves the element at index `i` up toward the root while it is
-     * ordered above its parent under `Compare`, restoring the heap
-     * invariant after an insertion at the end of the array.
+     * @brief Mueve el elemento en el índice `i` hacia arriba, hacia la
+     * raíz, mientras esté ordenado por encima de su padre según
+     * `Compare`, restaurando el invariante del montículo tras una
+     * inserción al final del arreglo.
      *
-     * At most one root-to-node path is walked, and the tree has height
-     * O(log n), so this is O(log n) in the worst case.
+     * A lo sumo se recorre un camino de la raíz a un nodo, y el árbol
+     * tiene altura O(log n), así que esto es O(log n) en el peor caso.
      */
     void sift_up(std::size_t i) {
         (void)i;
@@ -276,12 +282,13 @@ class BinaryHeap : public Collection<T> {
     }
 
     /**
-     * @brief Moves the element at index `i` down toward the leaves,
-     * repeatedly swapping with the child that should be above it under
-     * `Compare`, restoring the heap invariant after the root is replaced.
+     * @brief Mueve el elemento en el índice `i` hacia abajo, hacia las
+     * hojas, intercambiándolo repetidamente con el hijo que deba quedar
+     * por encima de él según `Compare`, restaurando el invariante del
+     * montículo después de reemplazar la raíz.
      *
-     * Same O(log n) bound as sift_up, for the same reason: at most one
-     * root-to-leaf path is walked.
+     * Misma cota O(log n) que sift_up, por la misma razón: a lo sumo se
+     * recorre un camino de la raíz a una hoja.
      */
     void sift_down(std::size_t i) {
         (void)i;
@@ -293,18 +300,19 @@ class BinaryHeap : public Collection<T> {
     }
 
     /**
-     * @brief Floyd's heapify: sifts down every internal node, from the last
-     * one to the root, turning an arbitrary array into a valid heap in
-     * O(n) total. See docs/guides/05_heaps.md for why this beats the naive
-     * O(n log n) of inserting elements one at a time.
+     * @brief Heapify de Floyd: hunde (sift down) cada nodo interno, desde
+     * el último hasta la raíz, convirtiendo un arreglo arbitrario en un
+     * montículo válido en O(n) total. Ver docs/guides/05_heaps.md para
+     * entender por qué esto supera al enfoque ingenuo de O(n log n) de
+     * insertar los elementos uno a uno.
      */
     void build_heap() {
         if (size_ < 2) {
             return;
         }
-        // The last internal (non-leaf) node is the parent of the last
-        // element; everything after it is a leaf and trivially a valid
-        // (single-node) heap already.
+        // El último nodo interno (no hoja) es el padre del último
+        // elemento; todo lo que viene después es una hoja y ya
+        // trivialmente es un montículo válido (de un solo nodo).
         std::size_t i = parent_of(size_ - 1);
         while (true) {
             sift_down(i);

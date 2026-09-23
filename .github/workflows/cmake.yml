@@ -1,4 +1,4 @@
-name: Build and Test
+name: Compilar y Probar
 
 on: [push, pull_request]
 
@@ -9,12 +9,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Configure CMake
+    - name: Configurar CMake
       run: cmake -B build -S .
 
-    - name: Build
+    - name: Compilar
       run: cmake --build build
 
-    - name: Run Tests
+    - name: Ejecutar pruebas
       # Corre los tests y muestra la salida en caso de error
       run: cd build && ctest --output-on-failure

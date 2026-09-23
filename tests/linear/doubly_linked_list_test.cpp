@@ -79,7 +79,7 @@ TEST(DoublyLinkedList, EraseAtMiddleFixesBothLinks) {
     std::vector<int> values(list.begin(), list.end());
     EXPECT_EQ(values, (std::vector<int>{1, 3, 4}));
 
-    // Traversing backwards should also reflect the removal.
+    // Recorrer hacia atrás también debe reflejar la eliminación.
     std::vector<int> reversed;
     for (auto it = list.rbegin(); it != list.rend(); ++it) {
         reversed.push_back(*it);

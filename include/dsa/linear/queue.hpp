@@ -10,26 +10,30 @@
 namespace dsa {
 
 /**
- * @brief A FIFO (first-in, first-out) queue backed by a circular buffer.
+ * @brief Una cola FIFO (first-in, first-out) respaldada por un buffer circular.
  *
- * Queue owns a raw, heap-allocated buffer of capacity `capacity_`. Elements
- * live in the slots `[front_, front_ + size_)`, indices taken modulo
- * `capacity_` ("wrapping around" the end of the buffer back to index 0).
- * Tracking a `front_` index instead of always keeping the first element at
- * index 0 is what makes dequeue() O(1): a naive array-backed queue that
- * shifts every remaining element left after a dequeue is O(n). See
- * docs/guides/03_stacks_queues.md for the full argument and a Big-O table.
+ * Queue posee un buffer crudo, asignado en el heap, de capacidad `capacity_`.
+ * Los elementos viven en las posiciones `[front_, front_ + size_)`, con
+ * índices tomados módulo `capacity_` ("dando la vuelta" al final del buffer
+ * de regreso al índice 0). Llevar un índice `front_` en lugar de mantener
+ * siempre el primer elemento en el índice 0 es lo que hace que dequeue() sea
+ * O(1): una cola respaldada por un arreglo ingenuo que desplaza cada
+ * elemento restante hacia la izquierda tras un dequeue es O(n). Ver
+ * docs/guides/03_stacks_queues.md para el argumento completo y una tabla de
+ * Big-O.
  *
- * When the buffer fills up, a new, larger buffer is allocated and the
- * existing elements are copied/moved into it starting at index 0 (the
- * wraparound is "unrolled" during the copy), exactly as with a dynamic
- * array's growth. This gives enqueue() amortized O(1) cost.
+ * Cuando el buffer se llena, se asigna un buffer nuevo y más grande y los
+ * elementos existentes se copian/mueven a él empezando en el índice 0 (el
+ * wraparound se "desenrolla" durante la copia), exactamente igual que el
+ * crecimiento de un arreglo dinámico. Esto le da a enqueue() un costo O(1)
+ * amortizado.
  *
- * The class manages memory manually with placement-new/explicit destructor
- * calls instead of wrapping std::vector or std::deque, so students can see
- * exactly how a circular buffer works under the hood.
+ * La clase gestiona la memoria manualmente con placement-new/llamadas
+ * explícitas al destructor en lugar de envolver std::vector o std::deque,
+ * para que los estudiantes vean exactamente cómo funciona un buffer
+ * circular por dentro.
  *
- * @tparam T Element type. Must be move or copy constructible.
+ * @tparam T Tipo del elemento. Debe ser move o copy constructible.
  */
 template <typename T>
 class Queue : public Collection<T> {
@@ -38,10 +42,10 @@ class Queue : public Collection<T> {
     using reference = T&;
     using const_reference = const T&;
 
-    /** @brief Constructs an empty Queue with no allocated storage. */
+    /** @brief Construye una Queue vacía sin almacenamiento asignado. */
     Queue() noexcept : data_(nullptr), front_(0), size_(0), capacity_(0) {}
 
-    /** @brief Copy constructor. Performs a deep copy of `other`'s elements. */
+    /** @brief Constructor de copia. Realiza una copia profunda de los elementos de `other`. */
     Queue(const Queue& other) : data_(nullptr), front_(0), size_(0), capacity_(0) {
         if (other.capacity_ > 0) {
             data_ = allocate(other.capacity_);
@@ -54,7 +58,7 @@ class Queue : public Collection<T> {
         front_ = 0;
     }
 
-    /** @brief Move constructor. Steals `other`'s buffer, leaving it empty. */
+    /** @brief Constructor de movimiento. Roba el buffer de `other`, dejándolo vacío. */
     Queue(Queue&& other) noexcept
         : data_(other.data_), front_(other.front_), size_(other.size_), capacity_(other.capacity_) {
         other.data_ = nullptr;
@@ -63,7 +67,7 @@ class Queue : public Collection<T> {
         other.capacity_ = 0;
     }
 
-    /** @brief Copy assignment operator (copy-and-swap). */
+    /** @brief Operador de asignación por copia (copy-and-swap). */
     Queue& operator=(const Queue& other) {
         if (this != &other) {
             Queue tmp(other);
@@ -72,7 +76,7 @@ class Queue : public Collection<T> {
         return *this;
     }
 
-    /** @brief Move assignment operator. */
+    /** @brief Operador de asignación por movimiento. */
     Queue& operator=(Queue&& other) noexcept {
         if (this != &other) {
             destroy_all();
@@ -89,37 +93,37 @@ class Queue : public Collection<T> {
         return *this;
     }
 
-    /** @brief Destroys all elements and releases the underlying storage. */
+    /** @brief Destruye todos los elementos y libera el almacenamiento subyacente. */
     ~Queue() override {
         destroy_all();
         deallocate(data_);
     }
 
-    /** @brief Number of elements currently stored. */
+    /** @brief Número de elementos actualmente almacenados. */
     std::size_t size() const noexcept override { return size_; }
 
-    /** @brief Number of elements the current buffer can hold without growing. */
+    /** @brief Número de elementos que el buffer actual puede contener sin crecer. */
     std::size_t capacity() const noexcept { return capacity_; }
 
-    /** @brief Whether the queue contains no elements. */
+    /** @brief Indica si la cola no contiene elementos. */
     bool empty() const noexcept override { return size_ == 0; }
 
-    /** @brief Destroys every element, leaving size() == 0. Capacity is kept. */
+    /** @brief Destruye todos los elementos, dejando size() == 0. La capacidad se mantiene. */
     void clear() override {
         destroy_all();
         size_ = 0;
         front_ = 0;
     }
 
-    /** @brief Inserts `value` at the back of the queue. Amortized O(1). */
+    /** @brief Inserta `value` al final de la cola. O(1) amortizado. */
     void enqueue(const T& value) { enqueue_impl(value); }
 
-    /** @brief Inserts `value` at the back of the queue via move. Amortized O(1). */
+    /** @brief Inserta `value` al final de la cola mediante movimiento. O(1) amortizado. */
     void enqueue(T&& value) { enqueue_impl(std::move(value)); }
 
     /**
-     * @brief Removes the element at the front of the queue. O(1).
-     * @throws std::out_of_range if the queue is empty.
+     * @brief Elimina el elemento al frente de la cola. O(1).
+     * @throws std::out_of_range si la cola está vacía.
      */
     void dequeue() {
         // TODO(estudiante): destruir el elemento en front_, avanzar front_
@@ -128,44 +132,44 @@ class Queue : public Collection<T> {
     }
 
     /**
-     * @brief Reference to the element at the front of the queue.
-     * @throws std::out_of_range if the queue is empty.
+     * @brief Referencia al elemento al frente de la cola.
+     * @throws std::out_of_range si la cola está vacía.
      */
     reference front() {
         if (empty()) {
-            throw std::out_of_range("Queue::front: queue is empty");
+            throw std::out_of_range("Queue::front: la cola está vacía");
         }
         return data_[front_];
     }
 
-    /** @brief Const reference to the element at the front of the queue. */
+    /** @brief Referencia constante al elemento al frente de la cola. */
     const_reference front() const {
         if (empty()) {
-            throw std::out_of_range("Queue::front: queue is empty");
+            throw std::out_of_range("Queue::front: la cola está vacía");
         }
         return data_[front_];
     }
 
     /**
-     * @brief Reference to the element at the back of the queue.
-     * @throws std::out_of_range if the queue is empty.
+     * @brief Referencia al elemento al final de la cola.
+     * @throws std::out_of_range si la cola está vacía.
      */
     reference back() {
         if (empty()) {
-            throw std::out_of_range("Queue::back: queue is empty");
+            throw std::out_of_range("Queue::back: la cola está vacía");
         }
         return data_[index_of(size_ - 1)];
     }
 
-    /** @brief Const reference to the element at the back of the queue. */
+    /** @brief Referencia constante al elemento al final de la cola. */
     const_reference back() const {
         if (empty()) {
-            throw std::out_of_range("Queue::back: queue is empty");
+            throw std::out_of_range("Queue::back: la cola está vacía");
         }
         return data_[index_of(size_ - 1)];
     }
 
-    /** @brief Swaps contents with `other` in O(1). */
+    /** @brief Intercambia el contenido con `other` en O(1). */
     void swap(Queue& other) noexcept {
         std::swap(data_, other.data_);
         std::swap(front_, other.front_);
@@ -183,10 +187,10 @@ class Queue : public Collection<T> {
 
     static void deallocate(T* ptr) { ::operator delete(ptr); }
 
-    /** @brief Physical buffer index of the logical position `offset` from front_. */
+    /** @brief Índice físico del buffer para la posición lógica `offset` desde front_. */
     std::size_t index_of(std::size_t offset) const { return advance(front_, offset); }
 
-    /** @brief Adds `steps` to `index`, wrapping around `capacity_`. */
+    /** @brief Suma `steps` a `index`, dando la vuelta alrededor de `capacity_`. */
     std::size_t advance(std::size_t index, std::size_t steps) const {
         return (index + steps) % capacity_;
     }
@@ -197,7 +201,8 @@ class Queue : public Collection<T> {
         }
     }
 
-    /** @brief Doubles capacity (or allocates 1 slot if currently empty), unrolling wraparound. */
+    /** @brief Duplica la capacidad (o asigna 1 espacio si está vacía actualmente), desenrollando el
+     * wraparound. */
     void grow() {
         // TODO(estudiante): asignar un buffer nuevo del doble de capacidad
         // (o 1 si capacity_ es 0), copiar/mover los elementos existentes

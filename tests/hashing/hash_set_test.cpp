@@ -9,14 +9,14 @@ namespace {
 
 using dsa::HashSet;
 
-// A deliberately weak hash function used to force collisions and exercise
-// the separate-chaining path regardless of bucket_count.
+// Una función de hash deliberadamente débil, usada para forzar colisiones y
+// ejercitar el camino de encadenamiento separado sin importar bucket_count.
 struct BadHash {
     std::size_t operator()(int x) const { return static_cast<std::size_t>(x % 4); }
 };
 
 // ---------------------------------------------------------------------
-// Construction
+// Construcción
 // ---------------------------------------------------------------------
 
 TEST(HashSetConstruction, DefaultConstructedIsEmpty) {
@@ -27,7 +27,7 @@ TEST(HashSetConstruction, DefaultConstructedIsEmpty) {
 }
 
 // ---------------------------------------------------------------------
-// insert / find / contains
+// insert / find / contains (insertar / buscar / contiene)
 // ---------------------------------------------------------------------
 
 TEST(HashSetBasics, InsertAndContainsString) {
@@ -64,18 +64,18 @@ TEST(HashSetBasics, SizeTracksInsertions) {
 }
 
 // ---------------------------------------------------------------------
-// Duplicate keys
+// Claves duplicadas
 // ---------------------------------------------------------------------
 
 TEST(HashSetDuplicates, InsertingSameKeyTwiceIsANoOp) {
     HashSet<std::string> set;
     EXPECT_TRUE(set.insert("dup"));
-    EXPECT_FALSE(set.insert("dup"));  // already present
+    EXPECT_FALSE(set.insert("dup"));  // ya está presente
     EXPECT_EQ(set.size(), 1u);
 }
 
 // ---------------------------------------------------------------------
-// erase
+// erase (eliminar)
 // ---------------------------------------------------------------------
 
 TEST(HashSetErase, RemovesExistingKey) {
@@ -96,7 +96,7 @@ TEST(HashSetErase, ReturnsFalseForMissingKey) {
 }
 
 // ---------------------------------------------------------------------
-// clear
+// clear (vaciar)
 // ---------------------------------------------------------------------
 
 TEST(HashSetClear, RemovesAllElements) {
@@ -109,17 +109,17 @@ TEST(HashSetClear, RemovesAllElements) {
 }
 
 // ---------------------------------------------------------------------
-// Forced collisions via a trivial hash function
+// Colisiones forzadas mediante una función de hash trivial
 // ---------------------------------------------------------------------
 
 TEST(HashSetCollisions, AllKeysAccessibleDespiteForcedCollisions) {
-    HashSet<int, BadHash> set(4);  // BadHash % 4 -> only 4 distinct slots
+    HashSet<int, BadHash> set(4);  // BadHash % 4 -> solo 4 ranuras distintas
     for (int i = 0; i < 50; ++i) {
         set.insert(i);
     }
     EXPECT_EQ(set.size(), 50u);
     for (int i = 0; i < 50; ++i) {
-        EXPECT_TRUE(set.contains(i)) << "missing key " << i;
+        EXPECT_TRUE(set.contains(i)) << "falta la clave " << i;
     }
 }
 
@@ -136,7 +136,7 @@ TEST(HashSetCollisions, EraseWorksWithinCollidingBucket) {
 }
 
 // ---------------------------------------------------------------------
-// Automatic rehashing
+// Rehash automático
 // ---------------------------------------------------------------------
 
 TEST(HashSetRehash, BucketCountGrowsAndAllElementsRemainAccessible) {
@@ -153,7 +153,7 @@ TEST(HashSetRehash, BucketCountGrowsAndAllElementsRemainAccessible) {
     EXPECT_EQ(set.size(), static_cast<std::size_t>(kCount));
 
     for (int i = 0; i < kCount; ++i) {
-        EXPECT_TRUE(set.contains(i)) << "missing key " << i << " after rehash";
+        EXPECT_TRUE(set.contains(i)) << "falta la clave " << i << " tras el rehash";
     }
 }
 

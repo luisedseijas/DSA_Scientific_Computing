@@ -9,7 +9,7 @@ namespace {
 using dsa::Graph;
 
 // ---------------------------------------------------------------------
-// Construction
+// Construcción
 // ---------------------------------------------------------------------
 
 TEST(GraphConstruction, DefaultIsUndirectedAndEmpty) {
@@ -32,7 +32,7 @@ TEST(GraphConstruction, AddVertexIsIdempotent) {
 }
 
 // ---------------------------------------------------------------------
-// add_edge / remove_edge / has_edge (undirected)
+// add_edge / remove_edge / has_edge (no dirigido)
 // ---------------------------------------------------------------------
 
 TEST(GraphUndirected, AddEdgeIsSymmetric) {
@@ -67,7 +67,7 @@ TEST(GraphUndirected, RemoveNonexistentEdgeIsNoOp) {
 }
 
 // ---------------------------------------------------------------------
-// add_edge / remove_edge / has_edge (directed)
+// add_edge / remove_edge / has_edge (dirigido)
 // ---------------------------------------------------------------------
 
 TEST(GraphDirected, AddEdgeIsOneDirectional) {
@@ -87,7 +87,7 @@ TEST(GraphDirected, RemoveEdgeOnlyRemovesThatDirection) {
 }
 
 // ---------------------------------------------------------------------
-// neighbors / vertices / counts
+// neighbors / vertices / conteos
 // ---------------------------------------------------------------------
 
 TEST(GraphQueries, NeighborsOfUnknownVertexIsEmpty) {

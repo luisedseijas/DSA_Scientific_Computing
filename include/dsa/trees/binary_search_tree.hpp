@@ -15,19 +15,20 @@
 namespace dsa {
 
 /**
- * @brief A binary search tree (BST) ordered with `operator<`.
+ * @brief Un arbol binario de busqueda (BST) ordenado con `operator<`.
  *
- * Every node maintains the BST invariant: everything in its left subtree
- * compares less than the node's value, and everything in its right subtree
- * compares greater. Duplicates (values that compare equal in both
- * directions) are rejected by `insert`, mirroring `std::set` semantics.
+ * Cada nodo mantiene el invariante BST: todo en su subarbol izquierdo
+ * compara menor que el valor del nodo, y todo en su subarbol derecho
+ * compara mayor. Los duplicados (valores que comparan iguales en ambas
+ * direcciones) son rechazados por `insert`, reflejando la semantica de
+ * `std::set`.
  *
- * Nodes keep a `parent` pointer so that an in-order const_iterator can walk
- * the tree in O(1) amortized per step without an auxiliary stack, the same
- * trick `std::map`/`std::set` iterators use.
+ * Los nodos guardan un puntero `parent` para que un const_iterator en
+ * orden pueda recorrer el arbol en O(1) amortizado por paso sin una pila
+ * auxiliar, el mismo truco que usan los iteradores de `std::map`/`std::set`.
  *
- * @tparam T Element type. Must be totally ordered by `operator<` and copy
- * or move constructible.
+ * @tparam T Tipo de elemento. Debe estar totalmente ordenado por
+ * `operator<` y ser copiable o movible en construccion.
  */
 template <typename T>
 class BinarySearchTree : public Collection<T> {
@@ -46,7 +47,7 @@ class BinarySearchTree : public Collection<T> {
     using value_type = T;
     using VisitFn = std::function<void(const T&)>;
 
-    /** @brief Forward, read-only in-order iterator. */
+    /** @brief Iterador de avance, de solo lectura, en orden. */
     class const_iterator {
        public:
         using iterator_category = std::forward_iterator_tag;
@@ -94,16 +95,16 @@ class BinarySearchTree : public Collection<T> {
         }
     };
 
-    /** @brief Constructs an empty BinarySearchTree. */
+    /** @brief Construye un BinarySearchTree vacio. */
     BinarySearchTree() noexcept : root_(nullptr), size_(0) {}
 
-    /** @brief Copy constructor. Performs a deep, structural copy of `other`. */
+    /** @brief Constructor de copia. Realiza una copia profunda y estructural de `other`. */
     BinarySearchTree(const BinarySearchTree& other) : root_(nullptr), size_(0) {
         root_ = clone_subtree(other.root_, nullptr);
         size_ = other.size_;
     }
 
-    /** @brief Copy assignment. Performs a deep, structural copy of `other`. */
+    /** @brief Asignacion de copia. Realiza una copia profunda y estructural de `other`. */
     BinarySearchTree& operator=(const BinarySearchTree& other) {
         if (this != &other) {
             BinarySearchTree tmp(other);
@@ -112,13 +113,13 @@ class BinarySearchTree : public Collection<T> {
         return *this;
     }
 
-    /** @brief Move constructor. Leaves `other` empty. */
+    /** @brief Constructor de movimiento. Deja `other` vacio. */
     BinarySearchTree(BinarySearchTree&& other) noexcept : root_(other.root_), size_(other.size_) {
         other.root_ = nullptr;
         other.size_ = 0;
     }
 
-    /** @brief Move assignment. Leaves `other` empty. */
+    /** @brief Asignacion de movimiento. Deja `other` vacio. */
     BinarySearchTree& operator=(BinarySearchTree&& other) noexcept {
         if (this != &other) {
             destroy_subtree(root_);
@@ -130,18 +131,18 @@ class BinarySearchTree : public Collection<T> {
         return *this;
     }
 
-    /** @brief Destructor. Frees every node in the tree. */
+    /** @brief Destructor. Libera todos los nodos del arbol. */
     ~BinarySearchTree() override { destroy_subtree(root_); }
 
-    /** @brief Swaps contents with `other` in constant time. */
+    /** @brief Intercambia el contenido con `other` en tiempo constante. */
     void swap(BinarySearchTree& other) noexcept {
         std::swap(root_, other.root_);
         std::swap(size_, other.size_);
     }
 
     /**
-     * @brief Inserts `value`, keeping the BST invariant. Duplicates are
-     * ignored (returns false). O(h) where h is the current height.
+     * @brief Inserta `value`, manteniendo el invariante BST. Los duplicados
+     * se ignoran (devuelve false). O(h) donde h es la altura actual.
      */
     bool insert(const T& value) { return insert_impl(value); }
 
@@ -149,9 +150,9 @@ class BinarySearchTree : public Collection<T> {
     bool insert(T&& value) { return insert_impl(std::move(value)); }
 
     /**
-     * @brief Removes `value` if present, handling the three classic erase
-     * cases (leaf, single child, two children via in-order successor).
-     * O(h). Returns true if an element was removed.
+     * @brief Elimina `value` si esta presente, manejando los tres casos
+     * clasicos de borrado (hoja, un solo hijo, dos hijos via sucesor
+     * in-order). O(h). Devuelve true si se elimino un elemento.
      */
     bool erase(const T& value) {
         Node* target = find_node(value);
@@ -161,28 +162,28 @@ class BinarySearchTree : public Collection<T> {
         return true;
     }
 
-    /** @brief Returns true if `value` is present in the tree. O(h). */
+    /** @brief Devuelve true si `value` esta presente en el arbol. O(h). */
     bool contains(const T& value) const { return find_node(value) != nullptr; }
 
-    /** @brief Alias for `contains`, matching common ADT terminology. */
+    /** @brief Alias de `contains`, siguiendo la terminologia comun de ADT. */
     bool find(const T& value) const { return contains(value); }
 
-    /** @brief Smallest element. Throws std::out_of_range if the tree is empty. */
+    /** @brief Elemento minimo. Lanza std::out_of_range si el arbol esta vacio. */
     const T& min() const {
-        if (root_ == nullptr) throw std::out_of_range("BinarySearchTree::min on empty tree");
+        if (root_ == nullptr) throw std::out_of_range("BinarySearchTree::min en arbol vacio");
         return leftmost(root_)->value;
     }
 
-    /** @brief Largest element. Throws std::out_of_range if the tree is empty. */
+    /** @brief Elemento maximo. Lanza std::out_of_range si el arbol esta vacio. */
     const T& max() const {
-        if (root_ == nullptr) throw std::out_of_range("BinarySearchTree::max on empty tree");
+        if (root_ == nullptr) throw std::out_of_range("BinarySearchTree::max en arbol vacio");
         return rightmost(root_)->value;
     }
 
-    /** @brief Number of elements currently stored. */
+    /** @brief Numero de elementos almacenados actualmente. */
     std::size_t size() const noexcept override { return size_; }
 
-    /** @brief Removes every element, leaving the tree empty. */
+    /** @brief Elimina todos los elementos, dejando el arbol vacio. */
     void clear() override {
         destroy_subtree(root_);
         root_ = nullptr;
@@ -190,12 +191,13 @@ class BinarySearchTree : public Collection<T> {
     }
 
     /**
-     * @brief Height of the tree: number of edges on the longest root-to-leaf
-     * path. An empty tree has height -1, a single-node tree has height 0.
+     * @brief Altura del arbol: numero de aristas en el camino raiz-hoja mas
+     * largo. Un arbol vacio tiene altura -1, un arbol de un solo nodo tiene
+     * altura 0.
      */
     int height() const { return height_of(root_); }
 
-    /** @brief In-order traversal as a vector. Always sorted ascending. */
+    /** @brief Recorrido en orden como vector. Siempre ordenado ascendente. */
     std::vector<T> inorder() const {
         std::vector<T> out;
         out.reserve(size_);
@@ -203,10 +205,10 @@ class BinarySearchTree : public Collection<T> {
         return out;
     }
 
-    /** @brief In-order traversal invoking `visit` per element, ascending order. */
+    /** @brief Recorrido en orden invocando `visit` por cada elemento, orden ascendente. */
     void inorder(const VisitFn& visit) const { inorder_impl(root_, visit); }
 
-    /** @brief Pre-order traversal (node, left, right) as a vector. */
+    /** @brief Recorrido pre-orden (node, left, right) como vector. */
     std::vector<T> preorder() const {
         std::vector<T> out;
         out.reserve(size_);
@@ -214,7 +216,7 @@ class BinarySearchTree : public Collection<T> {
         return out;
     }
 
-    /** @brief Post-order traversal (left, right, node) as a vector. */
+    /** @brief Recorrido post-orden (left, right, node) como vector. */
     std::vector<T> postorder() const {
         std::vector<T> out;
         out.reserve(size_);
@@ -222,7 +224,7 @@ class BinarySearchTree : public Collection<T> {
         return out;
     }
 
-    /** @brief Level-order (breadth-first) traversal as a vector. */
+    /** @brief Recorrido por niveles (breadth-first) como vector. */
     std::vector<T> level_order() const {
         std::vector<T> out;
         out.reserve(size_);
@@ -239,12 +241,12 @@ class BinarySearchTree : public Collection<T> {
         return out;
     }
 
-    /** @brief Iterator to the smallest element (or end() if empty). O(h). */
+    /** @brief Iterador al elemento minimo (o end() si esta vacio). O(h). */
     const_iterator begin() const {
         return const_iterator(root_ == nullptr ? nullptr : leftmost(root_));
     }
 
-    /** @brief Past-the-end iterator. */
+    /** @brief Iterador de fin (past-the-end). */
     const_iterator end() const { return const_iterator(nullptr); }
 
     const_iterator cbegin() const { return begin(); }
@@ -327,9 +329,10 @@ class BinarySearchTree : public Collection<T> {
         throw std::logic_error("BinarySearchTree::insert: no implementado");
     }
 
-    // Replaces the subtree rooted at `node` with the subtree rooted at
-    // `replacement` in node's parent's eyes (does not touch `replacement`'s
-    // own children). Standard "transplant" helper used by erase's 3 cases.
+    // Reemplaza el subarbol con raiz en `node` por el subarbol con raiz en
+    // `replacement` desde la perspectiva del padre de node (no toca los
+    // hijos propios de `replacement`). Funcion auxiliar "transplant"
+    // estandar usada por los 3 casos de erase.
     void transplant(Node* node, Node* replacement) {
         if (node->parent == nullptr) {
             root_ = replacement;

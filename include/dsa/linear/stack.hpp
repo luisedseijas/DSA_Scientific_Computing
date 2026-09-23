@@ -10,20 +10,21 @@
 namespace dsa {
 
 /**
- * @brief A LIFO (last-in, first-out) stack backed by its own dynamic array.
+ * @brief Una pila LIFO (last-in, first-out) respaldada por su propio arreglo dinámico.
  *
- * Stack owns a raw, heap-allocated buffer of capacity `capacity_` that
- * stores `size_` constructed elements at the front, exactly like
- * DynamicArray. Growth is geometric (capacity doubles when full), which
- * gives push() amortized O(1) cost. See docs/guides/03_stacks_queues.md
- * for the full theory (LIFO discipline, use cases, Big-O table).
+ * Stack posee un buffer crudo, asignado en el heap, de capacidad `capacity_`
+ * que almacena `size_` elementos construidos al frente, exactamente igual
+ * que DynamicArray. El crecimiento es geométrico (la capacidad se duplica
+ * cuando se llena), lo que le da a push() un costo O(1) amortizado. Ver
+ * docs/guides/03_stacks_queues.md para la teoría completa (disciplina LIFO,
+ * casos de uso, tabla de Big-O).
  *
- * The class manages memory manually with placement-new/explicit destructor
- * calls instead of wrapping std::vector, so students can see exactly how a
- * stack is implemented on top of a raw buffer (allocation, growth, Rule of
- * Five).
+ * La clase gestiona la memoria manualmente con placement-new/llamadas
+ * explícitas al destructor en lugar de envolver std::vector, para que los
+ * estudiantes vean exactamente cómo se implementa una pila sobre un buffer
+ * crudo (asignación, crecimiento, Regla de los Cinco).
  *
- * @tparam T Element type. Must be move or copy constructible.
+ * @tparam T Tipo del elemento. Debe ser move o copy constructible.
  */
 template <typename T>
 class Stack : public Collection<T> {
@@ -32,10 +33,10 @@ class Stack : public Collection<T> {
     using reference = T&;
     using const_reference = const T&;
 
-    /** @brief Constructs an empty Stack with no allocated storage. */
+    /** @brief Construye una Stack vacía sin almacenamiento asignado. */
     Stack() noexcept : data_(nullptr), size_(0), capacity_(0) {}
 
-    /** @brief Copy constructor. Performs a deep copy of `other`'s elements. */
+    /** @brief Constructor de copia. Realiza una copia profunda de los elementos de `other`. */
     Stack(const Stack& other) : data_(nullptr), size_(0), capacity_(0) {
         if (other.capacity_ > 0) {
             data_ = allocate(other.capacity_);
@@ -47,7 +48,7 @@ class Stack : public Collection<T> {
         size_ = other.size_;
     }
 
-    /** @brief Move constructor. Steals `other`'s buffer, leaving it empty. */
+    /** @brief Constructor de movimiento. Roba el buffer de `other`, dejándolo vacío. */
     Stack(Stack&& other) noexcept
         : data_(other.data_), size_(other.size_), capacity_(other.capacity_) {
         other.data_ = nullptr;
@@ -55,7 +56,7 @@ class Stack : public Collection<T> {
         other.capacity_ = 0;
     }
 
-    /** @brief Copy assignment operator (copy-and-swap). */
+    /** @brief Operador de asignación por copia (copy-and-swap). */
     Stack& operator=(const Stack& other) {
         if (this != &other) {
             Stack tmp(other);
@@ -64,7 +65,7 @@ class Stack : public Collection<T> {
         return *this;
     }
 
-    /** @brief Move assignment operator. */
+    /** @brief Operador de asignación por movimiento. */
     Stack& operator=(Stack&& other) noexcept {
         if (this != &other) {
             destroy_all();
@@ -79,36 +80,36 @@ class Stack : public Collection<T> {
         return *this;
     }
 
-    /** @brief Destroys all elements and releases the underlying storage. */
+    /** @brief Destruye todos los elementos y libera el almacenamiento subyacente. */
     ~Stack() override {
         destroy_all();
         deallocate(data_);
     }
 
-    /** @brief Number of elements currently stored. */
+    /** @brief Número de elementos actualmente almacenados. */
     std::size_t size() const noexcept override { return size_; }
 
-    /** @brief Number of elements the current buffer can hold without growing. */
+    /** @brief Número de elementos que el buffer actual puede contener sin crecer. */
     std::size_t capacity() const noexcept { return capacity_; }
 
-    /** @brief Whether the stack contains no elements. */
+    /** @brief Indica si la pila no contiene elementos. */
     bool empty() const noexcept override { return size_ == 0; }
 
-    /** @brief Destroys every element, leaving size() == 0. Capacity is kept. */
+    /** @brief Destruye todos los elementos, dejando size() == 0. La capacidad se mantiene. */
     void clear() override {
         destroy_all();
         size_ = 0;
     }
 
-    /** @brief Pushes `value` onto the top of the stack. Amortized O(1). */
+    /** @brief Inserta `value` en el tope de la pila. O(1) amortizado. */
     void push(const T& value) { push_impl(value); }
 
-    /** @brief Pushes `value` onto the top of the stack via move. Amortized O(1). */
+    /** @brief Inserta `value` en el tope de la pila mediante movimiento. O(1) amortizado. */
     void push(T&& value) { push_impl(std::move(value)); }
 
     /**
-     * @brief Removes the element at the top of the stack. O(1).
-     * @throws std::out_of_range if the stack is empty.
+     * @brief Elimina el elemento en el tope de la pila. O(1).
+     * @throws std::out_of_range si la pila está vacía.
      */
     void pop() {
         // TODO(estudiante): quitar el elemento del tope: decrementar size_ y
@@ -117,25 +118,25 @@ class Stack : public Collection<T> {
     }
 
     /**
-     * @brief Reference to the element at the top of the stack.
-     * @throws std::out_of_range if the stack is empty.
+     * @brief Referencia al elemento en el tope de la pila.
+     * @throws std::out_of_range si la pila está vacía.
      */
     reference top() {
         if (empty()) {
-            throw std::out_of_range("Stack::top: stack is empty");
+            throw std::out_of_range("Stack::top: la pila está vacía");
         }
         return data_[size_ - 1];
     }
 
-    /** @brief Const reference to the element at the top of the stack. */
+    /** @brief Referencia constante al elemento en el tope de la pila. */
     const_reference top() const {
         if (empty()) {
-            throw std::out_of_range("Stack::top: stack is empty");
+            throw std::out_of_range("Stack::top: la pila está vacía");
         }
         return data_[size_ - 1];
     }
 
-    /** @brief Swaps contents with `other` in O(1). */
+    /** @brief Intercambia el contenido con `other` en O(1). */
     void swap(Stack& other) noexcept {
         std::swap(data_, other.data_);
         std::swap(size_, other.size_);
@@ -157,7 +158,7 @@ class Stack : public Collection<T> {
         }
     }
 
-    /** @brief Doubles capacity (or allocates 1 slot if currently empty). */
+    /** @brief Duplica la capacidad (o asigna 1 espacio si está vacía actualmente). */
     void grow() {
         // TODO(estudiante): asignar un buffer nuevo del doble de capacidad
         // (o 1 si capacity_ es 0), mover los elementos existentes al nuevo

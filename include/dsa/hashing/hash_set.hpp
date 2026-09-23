@@ -9,35 +9,37 @@
 namespace dsa {
 
 /**
- * @brief A hash-based set of unique keys, implemented with separate
- * chaining.
+ * @brief Un conjunto de claves únicas basado en hashing, implementado con
+ * encadenamiento separado.
  *
- * This is intentionally self-contained and does not reuse HashMap: it is
- * implemented independently (each bucket is a `std::vector<Key>` rather
- * than a `std::vector<std::pair<Key, Value>>`) so that it can be read on
- * its own, pedagogically, without having to first understand hash_map.hpp.
- * Both files share the same strategy (see hash_map.hpp for the fuller
- * discussion of why chaining uses a vector-per-bucket and why rehashing
- * keeps operations O(1) amortized).
+ * Esto es intencionalmente autocontenido y no reutiliza HashMap: está
+ * implementado de forma independiente (cada bucket es un `std::vector<Key>`
+ * en lugar de un `std::vector<std::pair<Key, Value>>`) para que pueda
+ * leerse por sí solo, pedagógicamente, sin tener que entender antes
+ * hash_map.hpp. Ambos archivos comparten la misma estrategia (ver
+ * hash_map.hpp para la discusión más completa de por qué el encadenamiento
+ * usa un vector por bucket y por qué el rehash mantiene las operaciones en
+ * O(1) amortizado).
  *
- * @tparam Key Key type. Must be usable with `Hash` and `operator==`.
- * @tparam Hash Hash functor, defaults to `std::hash<Key>`.
+ * @tparam Key Tipo de la clave. Debe ser utilizable con `Hash` y
+ * `operator==`.
+ * @tparam Hash Functor de hash, por defecto `std::hash<Key>`.
  */
 template <typename Key, typename Hash = std::hash<Key>>
 class HashSet {
    public:
     using bucket_type = std::vector<Key>;
 
-    /** @brief Load factor threshold that triggers an automatic rehash. */
+    /** @brief Umbral de factor de carga que dispara un rehash automático. */
     static constexpr double kMaxLoadFactor = 0.75;
 
-    /** @brief Constructs an empty set with `bucket_count` initial buckets. */
+    /** @brief Construye un conjunto vacío con `bucket_count` buckets iniciales. */
     explicit HashSet(std::size_t bucket_count = 8)
         : buckets_(bucket_count == 0 ? 1 : bucket_count), size_(0) {}
 
     /**
-     * @brief Inserts `key` if not already present.
-     * @return true if `key` was newly inserted, false if it already existed.
+     * @brief Inserta `key` si aún no está presente.
+     * @return true si `key` se insertó de nuevo, false si ya existía.
      */
     bool insert(const Key& key) {
         (void)key;
@@ -48,7 +50,7 @@ class HashSet {
         throw std::logic_error("HashSet::insert: no implementado");
     }
 
-    /** @brief Returns true if `key` is present in the set. */
+    /** @brief Devuelve true si `key` está presente en el conjunto. */
     bool contains(const Key& key) const {
         (void)key;
         // TODO(estudiante): recorre el bucket correspondiente a `key` y
@@ -57,9 +59,10 @@ class HashSet {
     }
 
     /**
-     * @brief Returns a pointer to the stored key equal to `key`, or nullptr
-     * if absent. Useful when Key carries data beyond what participates in
-     * equality/hash (e.g. a struct hashed/compared only by one field).
+     * @brief Devuelve un puntero a la clave almacenada igual a `key`, o
+     * nullptr si está ausente. Útil cuando Key contiene datos más allá de
+     * los que participan en la igualdad/hash (p. ej. un struct
+     * hasheado/comparado solo por un campo).
      */
     const Key* find(const Key& key) const {
         (void)key;
@@ -70,8 +73,8 @@ class HashSet {
     }
 
     /**
-     * @brief Removes `key` from the set, if present.
-     * @return true if an element was removed, false if `key` was not found.
+     * @brief Elimina `key` del conjunto, si está presente.
+     * @return true si se eliminó un elemento, false si `key` no se encontró.
      */
     bool erase(const Key& key) {
         (void)key;
@@ -81,23 +84,23 @@ class HashSet {
         throw std::logic_error("HashSet::erase: no implementado");
     }
 
-    /** @brief Number of keys stored in the set. */
+    /** @brief Número de claves almacenadas en el conjunto. */
     std::size_t size() const noexcept { return size_; }
 
-    /** @brief True if the set has no elements. */
+    /** @brief True si el conjunto no tiene elementos. */
     bool empty() const noexcept { return size_ == 0; }
 
-    /** @brief Removes all elements and shrinks back to a single bucket. */
+    /** @brief Elimina todos los elementos y reduce a un solo bucket. */
     void clear() {
         buckets_.clear();
         buckets_.resize(1);
         size_ = 0;
     }
 
-    /** @brief Number of buckets currently allocated. */
+    /** @brief Número de buckets actualmente asignados. */
     std::size_t bucket_count() const noexcept { return buckets_.size(); }
 
-    /** @brief Current load factor: size() / bucket_count(). */
+    /** @brief Factor de carga actual: size() / bucket_count(). */
     double load_factor() const noexcept {
         return static_cast<double>(size_) / static_cast<double>(buckets_.size());
     }

@@ -9,14 +9,14 @@ namespace {
 
 using dsa::HashMap;
 
-// A deliberately weak hash function used to force collisions and exercise
-// the separate-chaining path regardless of bucket_count.
+// Una función de hash deliberadamente débil, usada para forzar colisiones y
+// ejercitar el camino de encadenamiento separado sin importar bucket_count.
 struct BadHash {
     std::size_t operator()(int x) const { return static_cast<std::size_t>(x % 4); }
 };
 
 // ---------------------------------------------------------------------
-// Construction
+// Construcción
 // ---------------------------------------------------------------------
 
 TEST(HashMapConstruction, DefaultConstructedIsEmpty) {
@@ -27,7 +27,7 @@ TEST(HashMapConstruction, DefaultConstructedIsEmpty) {
 }
 
 // ---------------------------------------------------------------------
-// insert / find / contains
+// insert / find / contains (insertar / buscar / contiene)
 // ---------------------------------------------------------------------
 
 TEST(HashMapBasics, InsertAndFindString) {
@@ -72,20 +72,20 @@ TEST(HashMapBasics, SizeTracksInsertions) {
 }
 
 // ---------------------------------------------------------------------
-// Duplicate keys
+// Claves duplicadas
 // ---------------------------------------------------------------------
 
 TEST(HashMapDuplicates, InsertOverwritesExistingKey) {
     HashMap<std::string, int> map;
     EXPECT_TRUE(map.insert("k", 1));
-    EXPECT_FALSE(map.insert("k", 2));  // second insert overwrites, not new
+    EXPECT_FALSE(map.insert("k", 2));  // la segunda inserción sobrescribe, no es nueva
     ASSERT_NE(map.find("k"), nullptr);
     EXPECT_EQ(*map.find("k"), 2);
     EXPECT_EQ(map.size(), 1u);
 }
 
 // ---------------------------------------------------------------------
-// operator[]
+// operator[] (operador de indexación)
 // ---------------------------------------------------------------------
 
 TEST(HashMapIndexOperator, CreatesEntryWithDefaultValueIfMissing) {
@@ -111,7 +111,7 @@ TEST(HashMapIndexOperator, DoesNotOverwriteExistingValue) {
 }
 
 // ---------------------------------------------------------------------
-// erase
+// erase (eliminar)
 // ---------------------------------------------------------------------
 
 TEST(HashMapErase, RemovesExistingKey) {
@@ -132,7 +132,7 @@ TEST(HashMapErase, ReturnsFalseForMissingKey) {
 }
 
 // ---------------------------------------------------------------------
-// clear
+// clear (vaciar)
 // ---------------------------------------------------------------------
 
 TEST(HashMapClear, RemovesAllEntries) {
@@ -145,17 +145,17 @@ TEST(HashMapClear, RemovesAllEntries) {
 }
 
 // ---------------------------------------------------------------------
-// Forced collisions via a trivial hash function
+// Colisiones forzadas mediante una función de hash trivial
 // ---------------------------------------------------------------------
 
 TEST(HashMapCollisions, AllKeysAccessibleDespiteForcedCollisions) {
-    HashMap<int, int, BadHash> map(4);  // BadHash % 4 -> only 4 distinct slots
+    HashMap<int, int, BadHash> map(4);  // BadHash % 4 -> solo 4 ranuras distintas
     for (int i = 0; i < 50; ++i) {
         map.insert(i, i * 10);
     }
     EXPECT_EQ(map.size(), 50u);
     for (int i = 0; i < 50; ++i) {
-        ASSERT_NE(map.find(i), nullptr) << "missing key " << i;
+        ASSERT_NE(map.find(i), nullptr) << "falta la clave " << i;
         EXPECT_EQ(*map.find(i), i * 10);
     }
 }
@@ -173,7 +173,7 @@ TEST(HashMapCollisions, EraseWorksWithinCollidingBucket) {
 }
 
 // ---------------------------------------------------------------------
-// Automatic rehashing
+// Rehash automático
 // ---------------------------------------------------------------------
 
 TEST(HashMapRehash, BucketCountGrowsAndAllElementsRemainAccessible) {
@@ -190,7 +190,7 @@ TEST(HashMapRehash, BucketCountGrowsAndAllElementsRemainAccessible) {
     EXPECT_EQ(map.size(), static_cast<std::size_t>(kCount));
 
     for (int i = 0; i < kCount; ++i) {
-        ASSERT_NE(map.find(i), nullptr) << "missing key " << i << " after rehash";
+        ASSERT_NE(map.find(i), nullptr) << "falta la clave " << i << " tras el rehash";
         EXPECT_EQ(*map.find(i), i * 2);
     }
 }

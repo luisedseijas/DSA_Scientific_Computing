@@ -58,14 +58,15 @@ TEST(CircularLinkedList, SingleNodeLifecycle) {
 }
 
 TEST(CircularLinkedList, IterationTerminatesAfterSizeElements) {
-    // The whole point of this test: the underlying chain has no nullptr
-    // sentinel, so iteration must stop by count, not by pointer comparison.
+    // El punto central de esta prueba: la cadena subyacente no tiene un
+    // centinela nullptr, así que la iteración debe detenerse por conteo,
+    // no por comparación de punteros.
     CircularLinkedList<int> list{1, 2, 3};
     std::size_t visited = 0;
     for (int value : list) {
         (void)value;
         ++visited;
-        ASSERT_LE(visited, 3u) << "iteration did not terminate";
+        ASSERT_LE(visited, 3u) << "la iteración no terminó";
     }
     EXPECT_EQ(visited, 3u);
 }

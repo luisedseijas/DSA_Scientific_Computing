@@ -1,8 +1,8 @@
-# Contributing Guide
+# Guía de contribución
 
-Please refer to the "How to Contribute" section in the [README.md](README.md) for detailed instructions on:
+Por favor consulta la sección "Cómo contribuir" en el [README.md](README.md) para instrucciones detalladas sobre:
 
-- Workflow (Forking/Branching)
-- Coding Standards (Google Style)
-- Testing Requirements
-- Pull Request Process
+- Flujo de trabajo (Fork/Ramas)
+- Estándares de codificación (Google Style)
+- Requisitos de pruebas
+- Proceso de Pull Request

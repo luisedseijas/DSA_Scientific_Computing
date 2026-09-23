@@ -12,14 +12,15 @@
 namespace dsa {
 
 /**
- * @brief Doubly linked list with O(1) push/pop at both ends.
+ * @brief Lista doblemente enlazada con push/pop O(1) en ambos extremos.
  *
- * Every node keeps a `prev` and `next` pointer, which is what buys
- * O(1) pop_back (unlike SinglyLinkedList, where finding the new tail
- * requires an O(n) walk). The extra pointer per node is the classic
- * space/time trade-off students should be able to name.
+ * Cada nodo mantiene un puntero `prev` y uno `next`, que es lo que
+ * permite pop_back en O(1) (a diferencia de SinglyLinkedList, donde
+ * encontrar la nueva cola requiere un recorrido O(n)). El puntero
+ * extra por nodo es el clásico compromiso espacio/tiempo que los
+ * estudiantes deben poder identificar.
  *
- * @tparam T Element type stored by value in each node.
+ * @tparam T Tipo de elemento almacenado por valor en cada nodo.
  */
 template <typename T>
 class DoublyLinkedList : public Collection<T> {
@@ -34,7 +35,7 @@ class DoublyLinkedList : public Collection<T> {
             : data(std::move(value)), prev(prev_), next(next_) {}
     };
 
-    // Shared implementation for the mutable and const bidirectional iterators.
+    // Implementación compartida para los iteradores bidireccionales mutable y const.
     template <typename ValueType, typename NodeType>
     class IteratorBase {
        public:
@@ -81,7 +82,7 @@ class DoublyLinkedList : public Collection<T> {
     using Iterator = IteratorBase<T, Node>;
     using ConstIterator = IteratorBase<const T, const Node>;
 
-    /** @brief Reverse iterator built on top of the bidirectional Iterator. */
+    /** @brief Iterador inverso construido sobre el Iterator bidireccional. */
     class ReverseIterator {
        public:
         explicit ReverseIterator(Node* node = nullptr) : node_(node) {}
@@ -110,8 +111,8 @@ class DoublyLinkedList : public Collection<T> {
     DoublyLinkedList() = default;
 
     DoublyLinkedList(std::initializer_list<T> values) {
-        // Built directly with raw pointers (not push_back) so this constructor
-        // keeps working even before push_back is implemented.
+        // Construido directamente con punteros crudos (no con push_back) para que
+        // este constructor siga funcionando incluso antes de implementar push_back.
         for (const auto& value : values) {
             Node* node = new Node(value, tail_, nullptr);
             if (tail_ != nullptr) {
@@ -175,38 +176,44 @@ class DoublyLinkedList : public Collection<T> {
     // --- Modifiers ---
 
     void push_front(const T& value) {
-        // TODO(estudiante): crear un nuevo nodo con `value` enlazado antes de head_ (actualizar prev/next) y actualizar head_/tail_/size_.
+        // TODO(estudiante): crear un nuevo nodo con `value` enlazado antes de head_ (actualizar
+        // prev/next) y actualizar head_/tail_/size_.
         (void)value;
         throw std::logic_error("DoublyLinkedList::push_front: no implementado");
     }
 
     void push_back(const T& value) {
-        // TODO(estudiante): crear un nuevo nodo con `value` enlazado después de tail_ (actualizar prev/next) y actualizar head_/tail_/size_.
+        // TODO(estudiante): crear un nuevo nodo con `value` enlazado después de tail_ (actualizar
+        // prev/next) y actualizar head_/tail_/size_.
         (void)value;
         throw std::logic_error("DoublyLinkedList::push_back: no implementado");
     }
 
     void pop_front() {
-        // TODO(estudiante): eliminar el nodo head_ actual, liberar su memoria y actualizar head_/tail_/size_ (incluyendo el nuevo prev de head_).
+        // TODO(estudiante): eliminar el nodo head_ actual, liberar su memoria y actualizar
+        // head_/tail_/size_ (incluyendo el nuevo prev de head_).
         throw std::logic_error("DoublyLinkedList::pop_front: no implementado");
     }
 
     void pop_back() {
-        // TODO(estudiante): eliminar el nodo tail_ actual, liberar su memoria y actualizar head_/tail_/size_ (incluyendo el nuevo next de tail_).
+        // TODO(estudiante): eliminar el nodo tail_ actual, liberar su memoria y actualizar
+        // head_/tail_/size_ (incluyendo el nuevo next de tail_).
         throw std::logic_error("DoublyLinkedList::pop_back: no implementado");
     }
 
-    /** @brief Inserts `value` so it becomes the element at `index`. */
+    /** @brief Inserta `value` de modo que quede en la posición `index`. */
     void insert_at(std::size_t index, const T& value) {
-        // TODO(estudiante): insertar `value` de modo que quede en la posición `index`, actualizando prev/next de los nodos vecinos (casos especiales: index == 0 e index == size_).
+        // TODO(estudiante): insertar `value` de modo que quede en la posición `index`, actualizando
+        // prev/next de los nodos vecinos (casos especiales: index == 0 e index == size_).
         (void)index;
         (void)value;
         throw std::logic_error("DoublyLinkedList::insert_at: no implementado");
     }
 
-    /** @brief Removes the element located at `index`. */
+    /** @brief Elimina el elemento ubicado en `index`. */
     void erase_at(std::size_t index) {
-        // TODO(estudiante): eliminar el nodo en la posición `index`, reenlazando prev/next de sus vecinos y actualizando head_/tail_/size_ si corresponde.
+        // TODO(estudiante): eliminar el nodo en la posición `index`, reenlazando prev/next de sus
+        // vecinos y actualizando head_/tail_/size_ si corresponde.
         (void)index;
         throw std::logic_error("DoublyLinkedList::erase_at: no implementado");
     }
@@ -215,28 +222,28 @@ class DoublyLinkedList : public Collection<T> {
 
     T& front() {
         if (head_ == nullptr) {
-            throw std::out_of_range("DoublyLinkedList::front: list is empty");
+            throw std::out_of_range("DoublyLinkedList::front: la lista está vacía");
         }
         return head_->data;
     }
 
     const T& front() const {
         if (head_ == nullptr) {
-            throw std::out_of_range("DoublyLinkedList::front: list is empty");
+            throw std::out_of_range("DoublyLinkedList::front: la lista está vacía");
         }
         return head_->data;
     }
 
     T& back() {
         if (tail_ == nullptr) {
-            throw std::out_of_range("DoublyLinkedList::back: list is empty");
+            throw std::out_of_range("DoublyLinkedList::back: la lista está vacía");
         }
         return tail_->data;
     }
 
     const T& back() const {
         if (tail_ == nullptr) {
-            throw std::out_of_range("DoublyLinkedList::back: list is empty");
+            throw std::out_of_range("DoublyLinkedList::back: la lista está vacía");
         }
         return tail_->data;
     }
@@ -279,7 +286,7 @@ class DoublyLinkedList : public Collection<T> {
 
    private:
     Node* node_at(std::size_t index) const {
-        // Walk from whichever end is closer to cut the traversal in half.
+        // Recorre desde el extremo más cercano para reducir el recorrido a la mitad.
         if (index <= size_ / 2) {
             Node* current = head_;
             for (std::size_t i = 0; i < index; ++i) {
@@ -295,8 +302,8 @@ class DoublyLinkedList : public Collection<T> {
     }
 
     void copy_from(const DoublyLinkedList& other) {
-        // Built directly with raw pointers (not push_back) so copy/move keep
-        // working even before push_back is implemented.
+        // Construido directamente con punteros crudos (no con push_back) para que
+        // copiar/mover sigan funcionando incluso antes de implementar push_back.
         for (const auto& value : other) {
             Node* node = new Node(value, tail_, nullptr);
             if (tail_ != nullptr) {

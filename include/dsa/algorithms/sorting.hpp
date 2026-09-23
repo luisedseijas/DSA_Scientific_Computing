@@ -10,20 +10,23 @@
 namespace dsa {
 
 /**
- * @brief Sorts the range [first, last) using bubble sort.
+ * @brief Ordena el rango [first, last) usando bubble sort.
  *
- * Repeatedly steps through the range, swapping adjacent elements that are
- * out of order. Stops early once a full pass makes no swaps.
+ * Recorre repetidamente el rango, intercambiando elementos adyacentes que
+ * esten fuera de orden. Termina anticipadamente en cuanto una pasada
+ * completa no realiza ningun intercambio.
  *
- * @tparam RandomIt Random access iterator type.
- * @tparam Compare Strict weak ordering predicate type.
- * @param first Iterator to the beginning of the range.
- * @param last Iterator to one-past-the-end of the range.
- * @param comp Comparator; defaults to std::less (ascending order).
+ * @tparam RandomIt Tipo de iterador de acceso aleatorio.
+ * @tparam Compare Tipo del predicado de orden estricto debil.
+ * @param first Iterador al comienzo del rango.
+ * @param last Iterador a una posicion despues del final del rango.
+ * @param comp Comparador; por defecto std::less (orden ascendente).
  *
- * Complexity: O(n^2) comparisons/swaps in the worst and average case,
- * O(n) in the best case (already sorted, thanks to the early exit).
- * Stable: yes (only swaps adjacent elements that are strictly out of order).
+ * Complejidad: O(n^2) comparaciones/intercambios en el peor caso y en el
+ * caso promedio, O(n) en el mejor caso (ya ordenado, gracias a la salida
+ * anticipada).
+ * Estable: si (solo intercambia elementos adyacentes que esten estrictamente
+ * fuera de orden).
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
@@ -34,19 +37,20 @@ void bubble_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Compa
 }
 
 /**
- * @brief Sorts the range [first, last) using insertion sort.
+ * @brief Ordena el rango [first, last) usando insertion sort.
  *
- * Builds the sorted range incrementally by inserting each element into its
- * correct position among the already-sorted prefix.
+ * Construye el rango ordenado de forma incremental, insertando cada
+ * elemento en su posicion correcta dentro del prefijo ya ordenado.
  *
- * @tparam RandomIt Random access iterator type.
- * @tparam Compare Strict weak ordering predicate type.
- * @param first Iterator to the beginning of the range.
- * @param last Iterator to one-past-the-end of the range.
- * @param comp Comparator; defaults to std::less (ascending order).
+ * @tparam RandomIt Tipo de iterador de acceso aleatorio.
+ * @tparam Compare Tipo del predicado de orden estricto debil.
+ * @param first Iterador al comienzo del rango.
+ * @param last Iterador a una posicion despues del final del rango.
+ * @param comp Comparador; por defecto std::less (orden ascendente).
  *
- * Complexity: O(n^2) worst/average case, O(n) best case (already sorted).
- * Stable: yes.
+ * Complejidad: O(n^2) en el peor caso/caso promedio, O(n) en el mejor caso
+ * (ya ordenado).
+ * Estable: si.
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
@@ -58,20 +62,22 @@ void insertion_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Co
 }
 
 /**
- * @brief Sorts the range [first, last) using selection sort.
+ * @brief Ordena el rango [first, last) usando selection sort.
  *
- * Repeatedly selects the minimum (per comp) element of the unsorted suffix
- * and swaps it into place.
+ * Selecciona repetidamente el elemento minimo (segun comp) del sufijo no
+ * ordenado y lo intercambia hacia su posicion correcta.
  *
- * @tparam RandomIt Random access iterator type.
- * @tparam Compare Strict weak ordering predicate type.
- * @param first Iterator to the beginning of the range.
- * @param last Iterator to one-past-the-end of the range.
- * @param comp Comparator; defaults to std::less (ascending order).
+ * @tparam RandomIt Tipo de iterador de acceso aleatorio.
+ * @tparam Compare Tipo del predicado de orden estricto debil.
+ * @param first Iterador al comienzo del rango.
+ * @param last Iterador a una posicion despues del final del rango.
+ * @param comp Comparador; por defecto std::less (orden ascendente).
  *
- * Complexity: O(n^2) in every case (best, average and worst), since the
- * unsorted suffix is always scanned in full regardless of its order.
- * Stable: no (the swap can move an equal element past another equal one).
+ * Complejidad: O(n^2) en todos los casos (mejor, promedio y peor), ya que
+ * el sufijo no ordenado siempre se recorre por completo sin importar su
+ * orden.
+ * Estable: no (el intercambio puede mover un elemento igual mas alla de
+ * otro elemento igual).
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
@@ -84,8 +90,8 @@ void selection_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Co
 namespace detail {
 
 /**
- * @brief Merges two adjacent sorted subranges [first, mid) and [mid, last)
- * into a single sorted range using an auxiliary buffer.
+ * @brief Fusiona dos subrangos ordenados adyacentes [first, mid) y
+ * [mid, last) en un unico rango ordenado usando un buffer auxiliar.
  */
 template <typename RandomIt, typename Compare>
 void merge_ranges(RandomIt first, RandomIt mid, RandomIt last, Compare comp) {
@@ -118,20 +124,22 @@ void merge_ranges(RandomIt first, RandomIt mid, RandomIt last, Compare comp) {
 }  // namespace detail
 
 /**
- * @brief Sorts the range [first, last) using recursive merge sort.
+ * @brief Ordena el rango [first, last) usando merge sort recursivo.
  *
- * Splits the range in half, recursively sorts each half, then merges the
- * two sorted halves using an auxiliary buffer (see detail::merge_ranges).
+ * Divide el rango a la mitad, ordena recursivamente cada mitad y luego
+ * fusiona las dos mitades ordenadas usando un buffer auxiliar (ver
+ * detail::merge_ranges).
  *
- * @tparam RandomIt Random access iterator type.
- * @tparam Compare Strict weak ordering predicate type.
- * @param first Iterator to the beginning of the range.
- * @param last Iterator to one-past-the-end of the range.
- * @param comp Comparator; defaults to std::less (ascending order).
+ * @tparam RandomIt Tipo de iterador de acceso aleatorio.
+ * @tparam Compare Tipo del predicado de orden estricto debil.
+ * @param first Iterador al comienzo del rango.
+ * @param last Iterador a una posicion despues del final del rango.
+ * @param comp Comparador; por defecto std::less (orden ascendente).
  *
- * Complexity: O(n log n) in the best, average and worst case.
- * Space: O(n) auxiliary due to the merge buffer.
- * Stable: yes (the merge step prefers the left subrange on ties).
+ * Complejidad: O(n log n) en el mejor, promedio y peor caso.
+ * Espacio: O(n) auxiliar debido al buffer de fusion.
+ * Estable: si (el paso de fusion prefiere el subrango izquierdo en caso de
+ * empate).
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
@@ -144,10 +152,11 @@ void merge_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Compar
 namespace detail {
 
 /**
- * @brief Chooses a pivot using the median-of-three strategy (first, middle,
- * last elements) and moves it to (last - 1), Hoare/Lomuto-friendly setup.
- * This avoids O(n^2) worst-case behavior on already-sorted or reverse-sorted
- * input, which a naive "always pick the last element" strategy suffers from.
+ * @brief Elige un pivote usando la estrategia de mediana de tres (elementos
+ * primero, medio y ultimo) y lo mueve a (last - 1), una disposicion
+ * compatible con Hoare/Lomuto. Esto evita el comportamiento O(n^2) en el
+ * peor caso ante entradas ya ordenadas o en orden inverso, algo que si sufre
+ * una estrategia ingenua de "siempre elegir el ultimo elemento".
  */
 template <typename RandomIt, typename Compare>
 RandomIt median_of_three_pivot(RandomIt first, RandomIt last, Compare comp) {
@@ -156,8 +165,8 @@ RandomIt median_of_three_pivot(RandomIt first, RandomIt last, Compare comp) {
     if (comp(*mid, *first)) std::iter_swap(mid, first);
     if (comp(*end, *first)) std::iter_swap(end, first);
     if (comp(*end, *mid)) std::iter_swap(end, mid);
-    // *mid now holds the median of {first, mid, end}. Move it next to the end
-    // so it can be used as the Lomuto partition pivot.
+    // *mid ahora contiene la mediana de {first, mid, end}. Se mueve junto al
+    // final para poder usarla como pivote de la particion de Lomuto.
     std::iter_swap(mid, end);
     return end;
 }
@@ -167,8 +176,8 @@ void quick_sort_impl(RandomIt first, RandomIt last, Compare comp) {
     auto distance = std::distance(first, last);
     if (distance <= 1) return;
     if (distance <= 16) {
-        // Small ranges: insertion sort avoids recursion overhead and is fast
-        // in practice for nearly-sorted tiny partitions.
+        // Rangos pequenos: insertion sort evita el costo de la recursion y en
+        // la practica es rapido para particiones diminutas casi ordenadas.
         insertion_sort(first, last, comp);
         return;
     }
@@ -191,23 +200,24 @@ void quick_sort_impl(RandomIt first, RandomIt last, Compare comp) {
 }  // namespace detail
 
 /**
- * @brief Sorts the range [first, last) using quick sort.
+ * @brief Ordena el rango [first, last) usando quick sort.
  *
- * Uses median-of-three pivot selection to avoid the classic O(n^2)
- * degradation that a fixed-pivot quicksort exhibits on already-sorted or
- * reverse-sorted input, and falls back to insertion sort for small
- * partitions.
+ * Usa seleccion de pivote por mediana de tres para evitar la degradacion
+ * clasica a O(n^2) que sufre un quicksort de pivote fijo ante entradas ya
+ * ordenadas o en orden inverso, y recurre a insertion sort para particiones
+ * pequenas.
  *
- * @tparam RandomIt Random access iterator type.
- * @tparam Compare Strict weak ordering predicate type.
- * @param first Iterator to the beginning of the range.
- * @param last Iterator to one-past-the-end of the range.
- * @param comp Comparator; defaults to std::less (ascending order).
+ * @tparam RandomIt Tipo de iterador de acceso aleatorio.
+ * @tparam Compare Tipo del predicado de orden estricto debil.
+ * @param first Iterador al comienzo del rango.
+ * @param last Iterador a una posicion despues del final del rango.
+ * @param comp Comparador; por defecto std::less (orden ascendente).
  *
- * Complexity: O(n log n) average and (with median-of-three) typical worst
- * case in practice; true worst case remains O(n^2) for adversarial input,
- * though median-of-three makes naturally-ordered inputs safe.
- * Stable: no (partitioning swaps elements across the pivot).
+ * Complejidad: O(n log n) en promedio y (con mediana de tres) tipicamente
+ * tambien en el peor caso en la practica; el verdadero peor caso sigue
+ * siendo O(n^2) para entradas adversariales, aunque la mediana de tres hace
+ * seguras las entradas naturalmente ordenadas.
+ * Estable: no (la particion intercambia elementos a traves del pivote).
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
@@ -220,9 +230,10 @@ void quick_sort(RandomIt /*first*/, RandomIt /*last*/, Compare /*comp*/ = Compar
 namespace detail {
 
 /**
- * @brief Restores the max-heap (per comp) property for the subtree rooted at
- * index `root` within the logical array [first, first + heap_size), assuming
- * both children subtrees already satisfy the heap property.
+ * @brief Restaura la propiedad de max-heap (segun comp) para el subarbol con
+ * raiz en el indice `root` dentro del arreglo logico
+ * [first, first + heap_size), asumiendo que ambos subarboles hijos ya
+ * satisfacen la propiedad de heap.
  */
 template <typename RandomIt, typename Compare>
 void sift_down(RandomIt first, std::size_t heap_size, std::size_t root, Compare comp) {
@@ -247,22 +258,22 @@ void sift_down(RandomIt first, std::size_t heap_size, std::size_t root, Compare 
 }  // namespace detail
 
 /**
- * @brief Sorts the range [first, last) using heap sort.
+ * @brief Ordena el rango [first, last) usando heap sort.
  *
- * Builds an in-place binary max-heap (per comp) over the range and then
- * repeatedly extracts the maximum, placing it at the end. This is a
- * self-contained heapify implementation over iterators; it does not depend
- * on dsa::BinaryHeap.
+ * Construye un max-heap binario in situ (segun comp) sobre el rango y luego
+ * extrae repetidamente el maximo, colocandolo al final. Es una
+ * implementacion autocontenida de heapify sobre iteradores; no depende de
+ * dsa::BinaryHeap.
  *
- * @tparam RandomIt Random access iterator type.
- * @tparam Compare Strict weak ordering predicate type.
- * @param first Iterator to the beginning of the range.
- * @param last Iterator to one-past-the-end of the range.
- * @param comp Comparator; defaults to std::less (ascending order).
+ * @tparam RandomIt Tipo de iterador de acceso aleatorio.
+ * @tparam Compare Tipo del predicado de orden estricto debil.
+ * @param first Iterador al comienzo del rango.
+ * @param last Iterador a una posicion despues del final del rango.
+ * @param comp Comparador; por defecto std::less (orden ascendente).
  *
- * Complexity: O(n log n) in the best, average and worst case.
- * Space: O(1) auxiliary (sorts in place).
- * Stable: no (heap extraction reorders equal elements).
+ * Complejidad: O(n log n) en el mejor, promedio y peor caso.
+ * Espacio: O(1) auxiliar (ordena in situ).
+ * Estable: no (la extraccion del heap reordena elementos iguales).
  */
 template <typename RandomIt,
           typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>

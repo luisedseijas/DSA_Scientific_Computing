@@ -18,7 +18,7 @@ TEST(BinaryTreeTest, InsertLevelOrderFillsBreadthFirst) {
     BinaryTree<int> tree;
     for (int v : {1, 2, 3, 4, 5, 6, 7}) tree.insert(v);
     EXPECT_EQ(tree.size(), 7u);
-    // A complete tree of 7 nodes filled level by level.
+    // Un arbol completo de 7 nodos llenado nivel por nivel.
     EXPECT_EQ(tree.level_order(), (std::vector<int>{1, 2, 3, 4, 5, 6, 7}));
 }
 
@@ -31,12 +31,12 @@ TEST(BinaryTreeTest, HeightSingleNode) {
 TEST(BinaryTreeTest, HeightBalancedSevenNodes) {
     BinaryTree<int> tree;
     for (int v : {1, 2, 3, 4, 5, 6, 7}) tree.insert(v);
-    // Complete tree with 7 nodes: perfectly balanced, height 2.
+    // Arbol completo de 7 nodos: perfectamente balanceado, altura 2.
     EXPECT_EQ(tree.height(), 2);
 }
 
 TEST(BinaryTreeTest, TraversalsOnKnownShape) {
-    // Level-order insertion of 1..7 builds:
+    // La insercion por niveles de 1..7 construye:
     //             1
     //           /   \
     //          2     3

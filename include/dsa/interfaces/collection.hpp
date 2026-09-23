@@ -6,11 +6,12 @@
 namespace dsa {
 
 /**
- * @brief Base contract every DSA container implements.
+ * @brief Contrato base que implementa todo contenedor de esta librería DSA.
  *
- * Keeping this minimal on purpose: it only captures what every container
- * in this library has in common (a size and an emptiness check). Concrete
- * ADT contracts (List, Stack, Queue, Tree, ...) build on top of this.
+ * Se mantiene mínimo a propósito: solo captura lo que todo contenedor
+ * de esta librería tiene en común (un tamaño y una verificación de
+ * vacuidad). Los contratos ADT concretos (List, Stack, Queue, Tree, ...)
+ * se construyen sobre este.
  */
 template <typename T>
 class Collection {

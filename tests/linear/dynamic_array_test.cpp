@@ -12,7 +12,7 @@ namespace {
 using dsa::DynamicArray;
 
 // ---------------------------------------------------------------------
-// Construction
+// Construcción
 // ---------------------------------------------------------------------
 
 TEST(DynamicArrayConstruction, DefaultConstructedIsEmpty) {
@@ -84,7 +84,7 @@ TEST(DynamicArrayPushPop, PushBackThenPopBackToEmptyKeepsCapacity) {
 }
 
 // ---------------------------------------------------------------------
-// Capacity growth
+// Crecimiento de capacidad
 // ---------------------------------------------------------------------
 
 TEST(DynamicArrayGrowth, CapacityDoublesWhenFull) {
@@ -103,7 +103,7 @@ TEST(DynamicArrayGrowth, CapacityDoublesWhenFull) {
         }
     }
 
-    // Growth should be logarithmic in the number of insertions, not linear.
+    // El crecimiento debe ser logarítmico en el número de inserciones, no lineal.
     EXPECT_LT(growth_events, 20);
     EXPECT_GE(arr.capacity(), 100u);
 }
@@ -175,7 +175,7 @@ TEST(DynamicArrayInsertErase, InsertOutOfRangeThrows) {
 TEST(DynamicArrayInsertErase, EraseFromMiddle) {
     DynamicArray<int> arr;
     for (int i = 0; i < 5; ++i) arr.push_back(i);  // 0 1 2 3 4
-    arr.erase(2);                                  // removes '2'
+    arr.erase(2);                                  // elimina '2'
 
     ASSERT_EQ(arr.size(), 4u);
     EXPECT_EQ(arr[0], 0);
@@ -202,7 +202,7 @@ TEST(DynamicArrayInsertErase, EraseOutOfRangeThrows) {
 }
 
 // ---------------------------------------------------------------------
-// Element access: operator[], at(), front(), back()
+// Acceso a elementos: operator[], at(), front(), back()
 // ---------------------------------------------------------------------
 
 TEST(DynamicArrayAccess, AtThrowsOutOfRange) {
@@ -264,7 +264,7 @@ TEST(DynamicArrayClear, ClearOnEmptyArrayIsNoop) {
 }
 
 // ---------------------------------------------------------------------
-// Copy semantics
+// Semántica de copia
 // ---------------------------------------------------------------------
 
 TEST(DynamicArrayCopy, CopyConstructorDeepCopies) {
@@ -274,7 +274,7 @@ TEST(DynamicArrayCopy, CopyConstructorDeepCopies) {
     DynamicArray<int> copy(original);
     copy[0] = 999;
 
-    EXPECT_EQ(original[0], 0);  // original untouched
+    EXPECT_EQ(original[0], 0);  // original sin modificar
     EXPECT_EQ(copy[0], 999);
     EXPECT_EQ(original.size(), copy.size());
 }
@@ -305,7 +305,7 @@ TEST(DynamicArrayCopy, SelfCopyAssignmentIsSafe) {
 }
 
 // ---------------------------------------------------------------------
-// Move semantics
+// Semántica de movimiento
 // ---------------------------------------------------------------------
 
 TEST(DynamicArrayMove, MoveConstructorStealsBuffer) {
@@ -333,7 +333,7 @@ TEST(DynamicArrayMove, MoveAssignmentStealsBuffer) {
 }
 
 // ---------------------------------------------------------------------
-// Iteration: range-for and <algorithm> compatibility
+// Iteración: compatibilidad con range-for y <algorithm>
 // ---------------------------------------------------------------------
 
 TEST(DynamicArrayIteration, RangeForVisitsAllElementsInOrder) {
@@ -398,7 +398,7 @@ TEST(DynamicArrayIteration, EmptyArrayBeginEqualsEnd) {
 }
 
 // ---------------------------------------------------------------------
-// Edge cases: empty array, single element
+// Casos límite: arreglo vacío, un solo elemento
 // ---------------------------------------------------------------------
 
 TEST(DynamicArrayEdgeCases, SingleElementFrontEqualsBack) {

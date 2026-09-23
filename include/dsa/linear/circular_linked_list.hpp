@@ -12,18 +12,19 @@
 namespace dsa {
 
 /**
- * @brief Singly linked, circularly linked list: the last node points back
- * to the first instead of to nullptr.
+ * @brief Lista enlazada simple y circular: el último nodo apunta de vuelta
+ * al primero en lugar de a nullptr.
  *
- * Only a `tail_` pointer is kept (tail_->next is the head), which is the
- * usual textbook trick: it gives O(1) access to both ends without a
- * separate head pointer. Because there is no natural "past-the-end"
- * node, iteration cannot rely on comparing against nullptr like the
- * other lists in this module; Iterator instead tracks how many steps it
- * has taken and stops after `size()` elements, which is what keeps
- * range-for from looping forever.
+ * Solo se mantiene un puntero `tail_` (tail_->next es el head), que es
+ * el truco clásico de los libros de texto: da acceso O(1) a ambos
+ * extremos sin necesidad de un puntero head separado. Como no existe un
+ * nodo "pasado el final" natural, la iteración no puede basarse en
+ * comparar contra nullptr como las demás listas de este módulo; en su
+ * lugar, Iterator lleva la cuenta de cuántos pasos ha dado y se detiene
+ * después de `size()` elementos, que es lo que evita que range-for
+ * itere indefinidamente.
  *
- * @tparam T Element type stored by value in each node.
+ * @tparam T Tipo de elemento almacenado por valor en cada nodo.
  */
 template <typename T>
 class CircularLinkedList : public Collection<T> {
@@ -36,11 +37,11 @@ class CircularLinkedList : public Collection<T> {
 
    public:
     /**
-     * @brief Forward iterator that stops after visiting `size()` nodes.
+     * @brief Iterador hacia adelante que se detiene tras visitar `size()` nodos.
      *
-     * A default-constructed Iterator (steps_remaining_ == 0) represents
-     * end(); this is what lets a range spanning the whole list terminate
-     * even though the underlying node chain never hits nullptr.
+     * Un Iterator construido por defecto (steps_remaining_ == 0) representa
+     * end(); esto es lo que permite que un rango que abarca toda la lista
+     * termine aunque la cadena de nodos subyacente nunca llegue a nullptr.
      */
     class Iterator {
        public:
@@ -80,7 +81,7 @@ class CircularLinkedList : public Collection<T> {
         std::size_t steps_remaining_;
     };
 
-    /** @brief Read-only counterpart of Iterator; same stop-after-`size()` logic. */
+    /** @brief Contraparte de solo lectura de Iterator; misma lógica de detenerse tras `size()`. */
     class ConstIterator {
        public:
         using iterator_category = std::forward_iterator_tag;
@@ -122,8 +123,8 @@ class CircularLinkedList : public Collection<T> {
     CircularLinkedList() = default;
 
     CircularLinkedList(std::initializer_list<T> values) {
-        // Built directly with raw pointers (not push_back) so this constructor
-        // keeps working even before push_back is implemented.
+        // Construido directamente con punteros crudos (no con push_back) para que
+        // este constructor siga funcionando incluso antes de implementar push_back.
         for (const auto& value : values) {
             if (tail_ == nullptr) {
                 Node* node = new Node(value);
@@ -188,25 +189,29 @@ class CircularLinkedList : public Collection<T> {
     // --- Modifiers ---
 
     void push_front(const T& value) {
-        // TODO(estudiante): insertar `value` como nuevo head (justo después de tail_->next), manejando el caso de lista vacía (nodo con auto-referencia) y actualizando size_.
+        // TODO(estudiante): insertar `value` como nuevo head (justo después de tail_->next),
+        // manejando el caso de lista vacía (nodo con auto-referencia) y actualizando size_.
         (void)value;
         throw std::logic_error("CircularLinkedList::push_front: no implementado");
     }
 
     void push_back(const T& value) {
-        // TODO(estudiante): insertar `value` como nuevo último elemento y avanzar tail_ para que apunte a él.
+        // TODO(estudiante): insertar `value` como nuevo último elemento y avanzar tail_ para que
+        // apunte a él.
         (void)value;
         throw std::logic_error("CircularLinkedList::push_back: no implementado");
     }
 
     void pop_front() {
-        // TODO(estudiante): eliminar el nodo head (tail_->next), liberar su memoria y actualizar tail_/size_ (caso especial: un solo elemento).
+        // TODO(estudiante): eliminar el nodo head (tail_->next), liberar su memoria y actualizar
+        // tail_/size_ (caso especial: un solo elemento).
         throw std::logic_error("CircularLinkedList::pop_front: no implementado");
     }
 
-    /** @brief Rotates the list by `n` positions (positive: head advances forward). */
+    /** @brief Rota la lista `n` posiciones (positivo: el head avanza hacia adelante). */
     void rotate(long long n) {
-        // TODO(estudiante): avanzar tail_ el número de posiciones equivalente a `n` (mod size_), soportando `n` negativo.
+        // TODO(estudiante): avanzar tail_ el número de posiciones equivalente a `n` (mod size_),
+        // soportando `n` negativo.
         (void)n;
         throw std::logic_error("CircularLinkedList::rotate: no implementado");
     }
@@ -215,28 +220,28 @@ class CircularLinkedList : public Collection<T> {
 
     T& front() {
         if (tail_ == nullptr) {
-            throw std::out_of_range("CircularLinkedList::front: list is empty");
+            throw std::out_of_range("CircularLinkedList::front: la lista está vacía");
         }
         return tail_->next->data;
     }
 
     const T& front() const {
         if (tail_ == nullptr) {
-            throw std::out_of_range("CircularLinkedList::front: list is empty");
+            throw std::out_of_range("CircularLinkedList::front: la lista está vacía");
         }
         return tail_->next->data;
     }
 
     T& back() {
         if (tail_ == nullptr) {
-            throw std::out_of_range("CircularLinkedList::back: list is empty");
+            throw std::out_of_range("CircularLinkedList::back: la lista está vacía");
         }
         return tail_->data;
     }
 
     const T& back() const {
         if (tail_ == nullptr) {
-            throw std::out_of_range("CircularLinkedList::back: list is empty");
+            throw std::out_of_range("CircularLinkedList::back: la lista está vacía");
         }
         return tail_->data;
     }
@@ -277,8 +282,8 @@ class CircularLinkedList : public Collection<T> {
 
    private:
     void copy_from(const CircularLinkedList& other) {
-        // Built directly with raw pointers (not push_back) so copy/move keep
-        // working even before push_back is implemented.
+        // Construido directamente con punteros crudos (no con push_back) para que
+        // copiar/mover sigan funcionando incluso antes de implementar push_back.
         for (const auto& value : other) {
             if (tail_ == nullptr) {
                 Node* node = new Node(value);
@@ -293,7 +298,7 @@ class CircularLinkedList : public Collection<T> {
         }
     }
 
-    Node* tail_ = nullptr;  // tail_->next is head, when non-null.
+    Node* tail_ = nullptr;  // tail_->next es head, cuando no es nulo.
     std::size_t size_ = 0;
 };
 

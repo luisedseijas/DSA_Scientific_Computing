@@ -8,8 +8,8 @@
 namespace dsa {
 
 /**
- * @brief Simple RAII Timer for benchmarking.
- * Prints duration to stdout on destruction.
+ * @brief Timer RAII simple para benchmarking.
+ * Imprime la duración por stdout al destruirse.
  */
 class Timer {
    public:
@@ -19,10 +19,10 @@ class Timer {
     ~Timer() {
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start_).count();
-        std::cout << "[" << name_ << "] Duration: " << duration << " microseconds\n";
+        std::cout << "[" << name_ << "] Duración: " << duration << " microsegundos\n";
     }
 
-    // Prevent copying
+    // Evita la copia
     Timer(const Timer&) = delete;
     Timer& operator=(const Timer&) = delete;
 

@@ -78,7 +78,7 @@ TEST(StackTest, CapacityGrowsAsElementsArePushed) {
     }
     EXPECT_TRUE(grew);
     EXPECT_EQ(s.size(), 100u);
-    // Verify LIFO order is preserved through growth.
+    // Verificar que el orden LIFO se preserva a través del crecimiento.
     for (int i = 99; i >= 0; --i) {
         EXPECT_EQ(s.top(), i);
         s.pop();

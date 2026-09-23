@@ -18,7 +18,7 @@ using dsa::dijkstra;
 using dsa::Graph;
 using dsa::topological_sort;
 
-// Helper: index of an element's first occurrence in `order`, or -1.
+// Auxiliar: índice de la primera aparición de un elemento en `order`, o -1.
 template <typename T>
 int index_of(const std::vector<T>& order, const T& value) {
     auto it = std::find(order.begin(), order.end(), value);
@@ -26,13 +26,13 @@ int index_of(const std::vector<T>& order, const T& value) {
 }
 
 // ---------------------------------------------------------------------
-// BFS
+// BFS (recorrido en anchura)
 // ---------------------------------------------------------------------
 
 TEST(Bfs, VisitsAllReachableVerticesInLevelOrder) {
     // 0 - 1 - 2
     // |       |
-    // 3 ------+   (cycle: 0-1-2-3-0)
+    // 3 ------+   (ciclo: 0-1-2-3-0)
     Graph<int> g;
     g.add_edge(0, 1);
     g.add_edge(1, 2);
@@ -50,7 +50,7 @@ TEST(Bfs, OnlyVisitsReachableComponent) {
     Graph<int> g;
     g.add_edge(1, 2);
     g.add_edge(2, 3);
-    g.add_edge(4, 5);  // Disconnected component.
+    g.add_edge(4, 5);  // Componente desconectada.
 
     auto order = bfs(g, 1);
     std::unordered_set<int> visited(order.begin(), order.end());
@@ -66,14 +66,14 @@ TEST(Bfs, UnknownSourceReturnsEmpty) {
 }
 
 // ---------------------------------------------------------------------
-// DFS
+// DFS (recorrido en profundidad)
 // ---------------------------------------------------------------------
 
 TEST(Dfs, VisitsAllReachableVerticesWithCycle) {
     Graph<int> g;
     g.add_edge(0, 1);
     g.add_edge(1, 2);
-    g.add_edge(2, 0);  // Cycle.
+    g.add_edge(2, 0);  // Ciclo.
     g.add_edge(2, 3);
 
     auto order = dfs(g, 0);
@@ -86,7 +86,7 @@ TEST(Dfs, OnlyVisitsReachableComponent) {
     Graph<int> g;
     g.add_edge(1, 2);
     g.add_edge(2, 3);
-    g.add_edge(4, 5);  // Disconnected component.
+    g.add_edge(4, 5);  // Componente desconectada.
 
     auto order = dfs(g, 1);
     std::unordered_set<int> visited(order.begin(), order.end());
@@ -115,10 +115,10 @@ TEST(Dfs, UnknownSourceReturnsEmpty) {
 }
 
 // ---------------------------------------------------------------------
-// Dijkstra
+// Dijkstra (camino más corto)
 // ---------------------------------------------------------------------
 
-// Known weighted undirected graph, distances from 0 verified by hand:
+// Grafo no dirigido y ponderado conocido, distancias desde 0 verificadas a mano:
 //
 //        4
 //   0 ------- 1
@@ -131,8 +131,8 @@ TEST(Dfs, UnknownSourceReturnsEmpty) {
 //      \      |
 //       3 --- 4
 //
-// Edges: (0,1,4) (0,2,1) (1,2,2) (1,3,1) (2,3,5) (3,4,3)
-// Shortest distances from 0: 0->0, 1->3 (via 2), 2->1, 3->4 (via 2,1), 4->7.
+// Aristas: (0,1,4) (0,2,1) (1,2,2) (1,3,1) (2,3,5) (3,4,3)
+// Distancias más cortas desde 0: 0->0, 1->3 (via 2), 2->1, 3->4 (via 2,1), 4->7.
 class DijkstraKnownGraph : public ::testing::Test {
    protected:
     void SetUp() override {
@@ -166,7 +166,7 @@ TEST(Dijkstra, SourceOnlyGraphHasZeroDistanceToItself) {
 TEST(Dijkstra, UnreachableVertexIsAbsent) {
     Graph<int> g(true);
     g.add_edge(0, 1, 1.0);
-    g.add_vertex(2);  // Isolated: unreachable from 0.
+    g.add_vertex(2);  // Aislado: inalcanzable desde 0.
     auto dist = dijkstra(g, 0);
     EXPECT_EQ(dist.find(2), dist.end());
 }
@@ -178,10 +178,10 @@ TEST(Dijkstra, ThrowsOnNegativeWeight) {
 }
 
 // ---------------------------------------------------------------------
-// Topological sort
+// Orden topológico
 // ---------------------------------------------------------------------
 
-// DAG modeling course prerequisites:
+// DAG que modela prerrequisitos de cursos:
 //   A -> B, A -> C, B -> D, C -> D, D -> E
 TEST(TopologicalSort, RespectsAllDependencies) {
     Graph<char> g(true);
@@ -204,12 +204,12 @@ TEST(TopologicalSort, ThrowsOnCycle) {
     Graph<int> g(true);
     g.add_edge(1, 2);
     g.add_edge(2, 3);
-    g.add_edge(3, 1);  // Cycle.
+    g.add_edge(3, 1);  // Ciclo.
     EXPECT_THROW(topological_sort(g), std::runtime_error);
 }
 
 TEST(TopologicalSort, ThrowsOnUndirectedGraph) {
-    Graph<int> g;  // Undirected by default.
+    Graph<int> g;  // No dirigido por defecto.
     g.add_edge(1, 2);
     EXPECT_THROW(topological_sort(g), std::invalid_argument);
 }

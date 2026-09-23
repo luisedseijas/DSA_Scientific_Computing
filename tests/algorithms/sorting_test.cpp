@@ -35,7 +35,7 @@ std::vector<int> RandomVector(std::size_t n, unsigned seed) {
 
 }  // namespace
 
-// Macro to generate the standard suite of cases for a sort function.
+// Macro que genera el conjunto estandar de casos para una funcion de ordenamiento.
 #define SORTING_TEST_SUITE(FnName)                                                          \
     namespace {                                                                             \
     void FnName##_call(std::vector<int>::iterator first, std::vector<int>::iterator last) { \

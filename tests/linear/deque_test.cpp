@@ -71,9 +71,10 @@ TEST(DequeTest, ClearEmptiesButKeepsCapacity) {
     EXPECT_THROW(d.front(), std::out_of_range);
 }
 
-// Key wraparound test: alternate push_front/push_back and pop_front/pop_back
-// so that front_ walks both directions around the buffer without growth,
-// and confirm order is preserved throughout.
+// Prueba clave de wraparound: alternar push_front/push_back y
+// pop_front/pop_back para que front_ recorra ambas direcciones alrededor
+// del buffer sin crecimiento, y confirmar que el orden se preserva en
+// todo momento.
 TEST(DequeTest, WraparoundBothEndsPreservesOrder) {
     Deque<int> d;
     d.push_back(2);
@@ -85,7 +86,7 @@ TEST(DequeTest, WraparoundBothEndsPreservesOrder) {
     ASSERT_GE(cap, 4u);
 
     EXPECT_EQ(d.front(), 0);
-    d.pop_front();  // front_ advances, wrapping if it was at the last slot
+    d.pop_front();  // front_ avanza, dando la vuelta si estaba en el último espacio
     d.push_back(4);
     // d: [1, 2, 3, 4]
     EXPECT_EQ(d.front(), 1);

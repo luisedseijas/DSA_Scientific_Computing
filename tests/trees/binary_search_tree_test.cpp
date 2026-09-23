@@ -89,15 +89,15 @@ TEST(BinarySearchTreeTest, HeightEmptySingleAndBalanced) {
 }
 
 TEST(BinarySearchTreeTest, HeightDegenerateTree) {
-    // Inserting an already-sorted sequence degenerates into a linked list.
+    // Insertar una secuencia ya ordenada degenera en una lista enlazada.
     BinarySearchTree<int> tree;
     for (int v : {1, 2, 3, 4, 5}) tree.insert(v);
-    EXPECT_EQ(tree.height(), 4);  // n - 1 edges
+    EXPECT_EQ(tree.height(), 4);  // n - 1 aristas
 }
 
 TEST(BinarySearchTreeTest, EraseLeafNode) {
     BinarySearchTree<int> tree = MakeSampleTree();
-    EXPECT_TRUE(tree.erase(20));  // 20 is a leaf
+    EXPECT_TRUE(tree.erase(20));  // 20 es una hoja
     EXPECT_FALSE(tree.contains(20));
     EXPECT_EQ(tree.size(), 6u);
     std::vector<int> after_erase = tree.inorder();
@@ -106,7 +106,7 @@ TEST(BinarySearchTreeTest, EraseLeafNode) {
 
 TEST(BinarySearchTreeTest, EraseNodeWithSingleChild) {
     BinarySearchTree<int> tree = MakeSampleTree();
-    tree.erase(20);  // 30 now has only right child 40
+    tree.erase(20);  // 30 ahora solo tiene el hijo derecho 40
     EXPECT_TRUE(tree.erase(30));
     EXPECT_FALSE(tree.contains(30));
     EXPECT_TRUE(tree.contains(40));
@@ -117,7 +117,7 @@ TEST(BinarySearchTreeTest, EraseNodeWithSingleChild) {
 
 TEST(BinarySearchTreeTest, EraseNodeWithTwoChildren) {
     BinarySearchTree<int> tree = MakeSampleTree();
-    EXPECT_TRUE(tree.erase(30));  // has children 20 and 40
+    EXPECT_TRUE(tree.erase(30));  // tiene los hijos 20 y 40
     EXPECT_FALSE(tree.contains(30));
     EXPECT_TRUE(tree.contains(20));
     EXPECT_TRUE(tree.contains(40));

@@ -10,25 +10,27 @@
 namespace dsa {
 
 /**
- * @brief A double-ended queue backed by a circular buffer.
+ * @brief Una cola doblemente terminada respaldada por un buffer circular.
  *
- * Deque owns a raw, heap-allocated buffer of capacity `capacity_`. Elements
- * live in the slots `[front_, front_ + size_)`, indices taken modulo
- * `capacity_` (the same wraparound scheme as Queue). Keeping a `front_`
- * index that can move both forward and backward around the buffer is what
- * lets push_front()/pop_front() and push_back()/pop_back() all run in O(1):
- * see docs/guides/03_stacks_queues.md for the full argument.
+ * Deque posee un buffer crudo, asignado en el heap, de capacidad `capacity_`.
+ * Los elementos viven en las posiciones `[front_, front_ + size_)`, con
+ * índices tomados módulo `capacity_` (el mismo esquema de wraparound que
+ * Queue). Llevar un índice `front_` que puede moverse tanto hacia adelante
+ * como hacia atrás alrededor del buffer es lo que permite que
+ * push_front()/pop_front() y push_back()/pop_back() se ejecuten todos en
+ * O(1): ver docs/guides/03_stacks_queues.md para el argumento completo.
  *
- * When the buffer fills up, a new, larger buffer is allocated and the
- * existing elements are copied/moved into it starting at index 0, exactly
- * as with Queue's growth. This gives both push_front() and push_back()
- * amortized O(1) cost.
+ * Cuando el buffer se llena, se asigna un buffer nuevo y más grande y los
+ * elementos existentes se copian/mueven a él empezando en el índice 0,
+ * exactamente igual que el crecimiento de Queue. Esto le da tanto a
+ * push_front() como a push_back() un costo O(1) amortizado.
  *
- * The class manages memory manually with placement-new/explicit destructor
- * calls instead of wrapping std::deque, so students can see exactly how a
- * double-ended circular buffer works under the hood.
+ * La clase gestiona la memoria manualmente con placement-new/llamadas
+ * explícitas al destructor en lugar de envolver std::deque, para que los
+ * estudiantes vean exactamente cómo funciona un buffer circular
+ * doblemente terminado por dentro.
  *
- * @tparam T Element type. Must be move or copy constructible.
+ * @tparam T Tipo del elemento. Debe ser move o copy constructible.
  */
 template <typename T>
 class Deque : public Collection<T> {
@@ -37,10 +39,10 @@ class Deque : public Collection<T> {
     using reference = T&;
     using const_reference = const T&;
 
-    /** @brief Constructs an empty Deque with no allocated storage. */
+    /** @brief Construye una Deque vacía sin almacenamiento asignado. */
     Deque() noexcept : data_(nullptr), front_(0), size_(0), capacity_(0) {}
 
-    /** @brief Copy constructor. Performs a deep copy of `other`'s elements. */
+    /** @brief Constructor de copia. Realiza una copia profunda de los elementos de `other`. */
     Deque(const Deque& other) : data_(nullptr), front_(0), size_(0), capacity_(0) {
         if (other.capacity_ > 0) {
             data_ = allocate(other.capacity_);
@@ -53,7 +55,7 @@ class Deque : public Collection<T> {
         front_ = 0;
     }
 
-    /** @brief Move constructor. Steals `other`'s buffer, leaving it empty. */
+    /** @brief Constructor de movimiento. Roba el buffer de `other`, dejándolo vacío. */
     Deque(Deque&& other) noexcept
         : data_(other.data_), front_(other.front_), size_(other.size_), capacity_(other.capacity_) {
         other.data_ = nullptr;
@@ -62,7 +64,7 @@ class Deque : public Collection<T> {
         other.capacity_ = 0;
     }
 
-    /** @brief Copy assignment operator (copy-and-swap). */
+    /** @brief Operador de asignación por copia (copy-and-swap). */
     Deque& operator=(const Deque& other) {
         if (this != &other) {
             Deque tmp(other);
@@ -71,7 +73,7 @@ class Deque : public Collection<T> {
         return *this;
     }
 
-    /** @brief Move assignment operator. */
+    /** @brief Operador de asignación por movimiento. */
     Deque& operator=(Deque&& other) noexcept {
         if (this != &other) {
             destroy_all();
@@ -88,43 +90,43 @@ class Deque : public Collection<T> {
         return *this;
     }
 
-    /** @brief Destroys all elements and releases the underlying storage. */
+    /** @brief Destruye todos los elementos y libera el almacenamiento subyacente. */
     ~Deque() override {
         destroy_all();
         deallocate(data_);
     }
 
-    /** @brief Number of elements currently stored. */
+    /** @brief Número de elementos actualmente almacenados. */
     std::size_t size() const noexcept override { return size_; }
 
-    /** @brief Number of elements the current buffer can hold without growing. */
+    /** @brief Número de elementos que el buffer actual puede contener sin crecer. */
     std::size_t capacity() const noexcept { return capacity_; }
 
-    /** @brief Whether the deque contains no elements. */
+    /** @brief Indica si la deque no contiene elementos. */
     bool empty() const noexcept override { return size_ == 0; }
 
-    /** @brief Destroys every element, leaving size() == 0. Capacity is kept. */
+    /** @brief Destruye todos los elementos, dejando size() == 0. La capacidad se mantiene. */
     void clear() override {
         destroy_all();
         size_ = 0;
         front_ = 0;
     }
 
-    /** @brief Inserts `value` at the front of the deque. Amortized O(1). */
+    /** @brief Inserta `value` al frente de la deque. O(1) amortizado. */
     void push_front(const T& value) { push_front_impl(value); }
 
-    /** @brief Inserts `value` at the front of the deque via move. Amortized O(1). */
+    /** @brief Inserta `value` al frente de la deque mediante movimiento. O(1) amortizado. */
     void push_front(T&& value) { push_front_impl(std::move(value)); }
 
-    /** @brief Inserts `value` at the back of the deque. Amortized O(1). */
+    /** @brief Inserta `value` al final de la deque. O(1) amortizado. */
     void push_back(const T& value) { push_back_impl(value); }
 
-    /** @brief Inserts `value` at the back of the deque via move. Amortized O(1). */
+    /** @brief Inserta `value` al final de la deque mediante movimiento. O(1) amortizado. */
     void push_back(T&& value) { push_back_impl(std::move(value)); }
 
     /**
-     * @brief Removes the element at the front of the deque. O(1).
-     * @throws std::out_of_range if the deque is empty.
+     * @brief Elimina el elemento al frente de la deque. O(1).
+     * @throws std::out_of_range si la deque está vacía.
      */
     void pop_front() {
         // TODO(estudiante): destruir el elemento en front_, avanzar front_
@@ -133,8 +135,8 @@ class Deque : public Collection<T> {
     }
 
     /**
-     * @brief Removes the element at the back of the deque. O(1).
-     * @throws std::out_of_range if the deque is empty.
+     * @brief Elimina el elemento al final de la deque. O(1).
+     * @throws std::out_of_range si la deque está vacía.
      */
     void pop_back() {
         // TODO(estudiante): destruir el elemento lógico en la posición
@@ -143,44 +145,44 @@ class Deque : public Collection<T> {
     }
 
     /**
-     * @brief Reference to the element at the front of the deque.
-     * @throws std::out_of_range if the deque is empty.
+     * @brief Referencia al elemento al frente de la deque.
+     * @throws std::out_of_range si la deque está vacía.
      */
     reference front() {
         if (empty()) {
-            throw std::out_of_range("Deque::front: deque is empty");
+            throw std::out_of_range("Deque::front: la deque está vacía");
         }
         return data_[front_];
     }
 
-    /** @brief Const reference to the element at the front of the deque. */
+    /** @brief Referencia constante al elemento al frente de la deque. */
     const_reference front() const {
         if (empty()) {
-            throw std::out_of_range("Deque::front: deque is empty");
+            throw std::out_of_range("Deque::front: la deque está vacía");
         }
         return data_[front_];
     }
 
     /**
-     * @brief Reference to the element at the back of the deque.
-     * @throws std::out_of_range if the deque is empty.
+     * @brief Referencia al elemento al final de la deque.
+     * @throws std::out_of_range si la deque está vacía.
      */
     reference back() {
         if (empty()) {
-            throw std::out_of_range("Deque::back: deque is empty");
+            throw std::out_of_range("Deque::back: la deque está vacía");
         }
         return data_[index_of(size_ - 1)];
     }
 
-    /** @brief Const reference to the element at the back of the deque. */
+    /** @brief Referencia constante al elemento al final de la deque. */
     const_reference back() const {
         if (empty()) {
-            throw std::out_of_range("Deque::back: deque is empty");
+            throw std::out_of_range("Deque::back: la deque está vacía");
         }
         return data_[index_of(size_ - 1)];
     }
 
-    /** @brief Swaps contents with `other` in O(1). */
+    /** @brief Intercambia el contenido con `other` en O(1). */
     void swap(Deque& other) noexcept {
         std::swap(data_, other.data_);
         std::swap(front_, other.front_);
@@ -198,15 +200,15 @@ class Deque : public Collection<T> {
 
     static void deallocate(T* ptr) { ::operator delete(ptr); }
 
-    /** @brief Physical buffer index of the logical position `offset` from front_. */
+    /** @brief Índice físico del buffer para la posición lógica `offset` desde front_. */
     std::size_t index_of(std::size_t offset) const { return advance(front_, offset); }
 
-    /** @brief Adds `steps` to `index`, wrapping around `capacity_`. */
+    /** @brief Suma `steps` a `index`, dando la vuelta alrededor de `capacity_`. */
     std::size_t advance(std::size_t index, std::size_t steps) const {
         return (index + steps) % capacity_;
     }
 
-    /** @brief Subtracts one step from `index`, wrapping around `capacity_`. */
+    /** @brief Resta un paso a `index`, dando la vuelta alrededor de `capacity_`. */
     std::size_t retreat(std::size_t index) const {
         // TODO(estudiante): devolver el índice anterior a `index`,
         // envolviendo a capacity_ - 1 cuando index es 0.
@@ -220,7 +222,8 @@ class Deque : public Collection<T> {
         }
     }
 
-    /** @brief Doubles capacity (or allocates 1 slot if currently empty), unrolling wraparound. */
+    /** @brief Duplica la capacidad (o asigna 1 espacio si está vacía actualmente), desenrollando el
+     * wraparound. */
     void grow() {
         // TODO(estudiante): asignar un buffer nuevo del doble de capacidad
         // (o 1 si capacity_ es 0), copiar/mover los elementos existentes

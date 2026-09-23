@@ -12,8 +12,8 @@ namespace {
 
 using dsa::PriorityQueue;
 
-// Drains a priority queue with repeated pop() and returns the resulting
-// sequence, which must come out ordered by decreasing priority.
+// Vacía una cola de prioridad con pop() repetido y devuelve la secuencia
+// resultante, que debe salir ordenada por prioridad decreciente.
 template <typename T, typename Compare>
 std::vector<T> drain(PriorityQueue<T, Compare>& pq) {
     std::vector<T> out;
@@ -25,7 +25,7 @@ std::vector<T> drain(PriorityQueue<T, Compare>& pq) {
 }
 
 // ---------------------------------------------------------------------
-// Construction / empty state
+// Construcción / estado vacío
 // ---------------------------------------------------------------------
 
 TEST(PriorityQueueConstruction, DefaultConstructedIsEmpty) {
@@ -55,7 +55,7 @@ TEST(PriorityQueueConstruction, SingleElement) {
 }
 
 // ---------------------------------------------------------------------
-// Max-priority queue (default Compare = std::less<T>)
+// Cola de prioridad máxima (Compare por defecto = std::less<T>)
 // ---------------------------------------------------------------------
 
 TEST(PriorityQueueMaxHeap, PushInArbitraryOrderPopsDescending) {
@@ -88,7 +88,7 @@ TEST(PriorityQueueMaxHeap, ManyElementsWithDuplicatesProduceSortedOutput) {
 }
 
 // ---------------------------------------------------------------------
-// Min-priority queue (Compare = std::greater<T>)
+// Cola de prioridad mínima (Compare = std::greater<T>)
 // ---------------------------------------------------------------------
 
 TEST(PriorityQueueMinHeap, PushInArbitraryOrderPopsAscending) {
@@ -100,7 +100,7 @@ TEST(PriorityQueueMinHeap, PushInArbitraryOrderPopsAscending) {
 }
 
 // ---------------------------------------------------------------------
-// Construction from an iterator range (delegates to BinaryHeap::build_heap)
+// Construcción desde un rango de iteradores (delega en BinaryHeap::build_heap)
 // ---------------------------------------------------------------------
 
 TEST(PriorityQueueBuildFromRange, FromUnsortedVectorMaxHeap) {
@@ -140,7 +140,7 @@ TEST(PriorityQueueClear, ResetsSizeAndIsUsableAfterward) {
 }
 
 // ---------------------------------------------------------------------
-// Copy / move semantics (inherited from BinaryHeap via defaulted members)
+// Semántica de copia / movimiento (heredada de BinaryHeap vía miembros por defecto)
 // ---------------------------------------------------------------------
 
 TEST(PriorityQueueCopyMove, CopyIsIndependent) {

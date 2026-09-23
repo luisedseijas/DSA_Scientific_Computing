@@ -1,62 +1,62 @@
-# Scientific Software Engineering: Data Structures & Algorithms
+# Ingeniería de Software Científico: Estructuras de Datos y Algoritmos
 
-Welcome to the **Scientific Software Engineering** repository for the Data Structures and Algorithms (DSA) course. This project is not just a collection of code; it is an engineering environment designed to teach you how to build robust, scalable, and testable software.
+Bienvenido al repositorio de **Ingeniería de Software Científico** para el curso de Estructuras de Datos y Algoritmos (DSA). Este proyecto no es solo una colección de código; es un entorno de ingeniería diseñado para enseñarte a construir software robusto, escalable y comprobable.
 
-## 📚 Philosophy
+## 📚 Filosofía
 
-We treat Computer Science as an experimental science. Every data structure is a hypothesis about efficiency, and every benchmark is an experiment to verify it.
+Tratamos la Ciencia de la Computación como una ciencia experimental. Cada estructura de datos es una hipótesis sobre eficiencia, y cada benchmark es un experimento para verificarla.
 
-- **Taxonomy**: Code is organized by mathematical concept, not by textbook chapter.
-- **Hygiene**: We enforce strict coding standards (Google Style) to ensure readability and maintainability.
-- **Rigor**: No code is accepted without proof of correctness (Unit Tests) and proof of efficiency (Benchmarks).
+- **Taxonomía**: El código está organizado por concepto matemático, no por capítulo de libro de texto.
+- **Higiene**: Aplicamos estándares de codificación estrictos (Google Style) para garantizar la legibilidad y el mantenimiento.
+- **Rigor**: No se acepta código sin prueba de corrección (Pruebas Unitarias) y prueba de eficiencia (Benchmarks).
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Primeros Pasos
 
-### Prerequisites
-- **C++ Compiler** supporting C++17 (GCC 9+, Clang 10+, MSVC 2019+).
-- **CMake** 3.15 or higher.
-- **Git** for version control.
+### Requisitos previos
+- **Compilador de C++** compatible con C++17 (GCC 9+, Clang 10+, MSVC 2019+).
+- **CMake** 3.15 o superior.
+- **Git** para el control de versiones.
 
-### Installation
+### Instalación
 
-1. **Clone the repository**:
+1. **Clona el repositorio**:
    ```bash
    git clone <REPOSITORY_URL>
    cd DSA_Repo
    ```
 
-2. **Configure the project**:
-   We use CMake to manage dependencies (like GoogleTest) automatically.
+2. **Configura el proyecto**:
+   Usamos CMake para gestionar las dependencias (como GoogleTest) automáticamente.
    ```bash
    cmake -B build -S .
    ```
 
-3. **Build**:
+3. **Compila**:
    ```bash
    cmake --build build
    ```
 
 ---
 
-## 🧪 Verification & Testing
+## 🧪 Verificación y Pruebas
 
-We use **GoogleTest** for unit testing. You should run tests frequently.
+Usamos **GoogleTest** para las pruebas unitarias. Debes ejecutar las pruebas con frecuencia.
 
-### Running Tests
-After building, run the test suite:
+### Ejecutar las pruebas
+Después de compilar, ejecuta la suite de pruebas:
 ```bash
 cd build
 ctest --output-on-failure
 ```
-*Tip: `--output-on-failure` shows you exactly why a test failed.*
+*Consejo: `--output-on-failure` te muestra exactamente por qué falló una prueba.*
 
-### Running Benchmarks
-To measure the performance of your implementations:
+### Ejecutar los benchmarks
+Para medir el rendimiento de tus implementaciones:
 ```bash
 ./build/bench_sorting
-# or any other benchmark executable
+# o cualquier otro ejecutable de benchmark
 ```
 
 ---
@@ -77,69 +77,69 @@ implementación de referencia completa (uso del docente).
 
 ---
 
-## 📂 Project Structure
+## 📂 Estructura del proyecto
 
-The repository follows a clean separation of concerns:
+El repositorio sigue una separación de responsabilidades clara:
 
 ```text
 .
-├── include/dsa/        # HEADER-ONLY LIBRARY (The Core)
-│   ├── interfaces/     # Abstract base classes (Contacts)
-│   ├── linear/         # Arrays, Lists, Stacks, Queues, Deque
-│   ├── trees/          # BST, Binary Tree, Heap, Priority Queue
+├── include/dsa/        # LIBRERÍA HEADER-ONLY (el núcleo)
+│   ├── interfaces/     # Clases base abstractas (contratos)
+│   ├── linear/         # Arreglos, listas, pilas, colas, deque
+│   ├── trees/          # BST, árbol binario, heap, cola de prioridad
 │   ├── hashing/         # HashMap, HashSet
-│   ├── graphs/          # Graph, BFS/DFS/Dijkstra/Topo Sort
-│   ├── algorithms/     # Sorting, Searching
-│   └── utils/          # Helpers (Timer, Random, etc.)
+│   ├── graphs/          # Grafo, BFS/DFS/Dijkstra/orden topológico
+│   ├── algorithms/     # Ordenamiento, búsqueda
+│   └── utils/          # Utilidades (Timer, Random, etc.)
 ├── docs/guides/         # Guías pedagógicas por módulo (español)
-├── tests/              # Unit tests (GoogleTest)
-├── benchmarks/         # Performance measurement scripts
-├── examples/           # Minimal "Hello World" checks
-└── .github/            # CI/CD Configuration (Automated Grading)
+├── tests/              # Pruebas unitarias (GoogleTest)
+├── benchmarks/         # Scripts de medición de rendimiento
+├── examples/           # Comprobaciones mínimas tipo "Hello World"
+└── .github/            # Configuración de CI/CD (calificación automática)
 ```
 
 ---
 
-## 🤝 How to Contribute
+## 🤝 Cómo contribuir
 
-To pass this course, you must act like a Software Engineer contributing to a large open-source project.
+Para aprobar este curso, debes actuar como un Ingeniero de Software contribuyendo a un gran proyecto de código abierto.
 
-### Workflow
+### Flujo de trabajo
 
-1. **Fork & Branch**:
-   Never work on `main`. Create a feature branch for your assignment.
+1. **Fork y rama**:
+   Nunca trabajes sobre `main`. Crea una rama de funcionalidad para tu tarea.
    ```bash
    git checkout -b feat/linked-list-implementation
    ```
 
-2. **Test-Driven Development (TDD)**:
-   - **Step 1**: Write a failing test in `tests/`.
-   - **Step 2**: Define the interface in `include/dsa/`.
-   - **Step 3**: Implement the logic.
-   - **Step 4**: Verify the test passes.
+2. **Desarrollo guiado por pruebas (TDD)**:
+   - **Paso 1**: Escribe una prueba que falle en `tests/`.
+   - **Paso 2**: Define la interfaz en `include/dsa/`.
+   - **Paso 3**: Implementa la lógica.
+   - **Paso 4**: Verifica que la prueba pase.
 
-3. **Code Hygiene**:
-   Before committing, ensure your code is formatted correctly. We use `Clang-Format`.
+3. **Higiene del código**:
+   Antes de hacer commit, asegúrate de que tu código esté formateado correctamente. Usamos `Clang-Format`.
    ```bash
-   # If you have clang-format installed
+   # Si tienes clang-format instalado
    clang-format -i include/dsa/your_file.hpp
    ```
 
 4. **Commit**:
-   Write clear, descriptive commit messages.
+   Escribe mensajes de commit claros y descriptivos.
    ```bash
    git commit -m "Feat: Implement DoublyLinkedList insertion logic"
    ```
 
 5. **Pull Request (PR)**:
-   - Push your branch to GitHub.
-   - Open a PR against `main`.
-   - **Check CI Status**: Wait for the checkmark. If you see a red cross ❌, your code failed to compile or pass tests on the server. Fix it!
+   - Sube tu rama a GitHub.
+   - Abre un PR contra `main`.
+   - **Revisa el estado del CI**: Espera la marca de verificación. Si ves una cruz roja ❌, tu código falló al compilar o al pasar las pruebas en el servidor. ¡Corrígelo!
 
-### Rules of Engagement
-- **Header-Only**: Most data structures using Templates must be in `.hpp` files in `include/dsa`.
-- **No Binaries**: Never commit `.exe` checks, `.o` files, or the `build/` directory. (The `.gitignore` handles this, do not bypass it).
-- **Documentation**: Comment complex logic. "Code tells you how, comments tell you why."
+### Reglas de convivencia
+- **Header-Only**: La mayoría de las estructuras de datos que usan plantillas (templates) deben estar en archivos `.hpp` dentro de `include/dsa`.
+- **Sin binarios**: Nunca hagas commit de archivos `.exe`, `.o`, ni del directorio `build/`. (El `.gitignore` se encarga de esto, no lo evites).
+- **Documentación**: Comenta la lógica compleja. "El código te dice el cómo, los comentarios te dicen el porqué."
 
 ---
-*Happy Coding!*
+*¡Feliz codificación!*

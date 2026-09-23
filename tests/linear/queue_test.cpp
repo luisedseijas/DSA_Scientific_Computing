@@ -64,10 +64,11 @@ TEST(QueueTest, ClearEmptiesButKeepsCapacity) {
     EXPECT_THROW(q.front(), std::out_of_range);
 }
 
-// This is the key test for a ring buffer: repeatedly enqueue/dequeue so that
-// front_ wraps past the end of the buffer without triggering growth, and
-// confirm elements are still delivered in FIFO order and capacity is reused
-// instead of growing.
+// Esta es la prueba clave para un buffer circular: hacer enqueue/dequeue
+// repetidamente para que front_ dé la vuelta más allá del final del buffer
+// sin provocar un crecimiento, y confirmar que los elementos se siguen
+// entregando en orden FIFO y que la capacidad se reutiliza en lugar de
+// crecer.
 TEST(QueueTest, WraparoundKeepsFifoOrderWithoutGrowing) {
     Queue<int> q;
     for (int i = 0; i < 4; ++i) {
@@ -83,7 +84,7 @@ TEST(QueueTest, WraparoundKeepsFifoOrderWithoutGrowing) {
         EXPECT_EQ(expected_front, round);
         q.enqueue(next_value++);
     }
-    // Reusing freed slots at the head must not have required growth.
+    // Reutilizar los espacios liberados al inicio no debe haber requerido crecimiento.
     EXPECT_EQ(q.capacity(), cap);
     EXPECT_EQ(q.size(), 4u);
 }
@@ -95,10 +96,10 @@ TEST(QueueTest, WraparoundPreservesOrderStrict) {
     q.enqueue(3);
     q.enqueue(4);
     std::size_t cap = q.capacity();
-    q.dequeue();  // remove 1
-    q.dequeue();  // remove 2
+    q.dequeue();  // elimina 1
+    q.dequeue();  // elimina 2
     q.enqueue(5);
-    q.enqueue(6);  // these should wrap into freed slots if capacity allows
+    q.enqueue(6);  // estos deberían dar la vuelta a espacios liberados si la capacidad lo permite
     EXPECT_EQ(q.capacity(), cap);
     EXPECT_EQ(q.front(), 3);
     q.dequeue();

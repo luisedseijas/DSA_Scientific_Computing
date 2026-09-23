@@ -13,15 +13,15 @@
 namespace dsa {
 
 /**
- * @brief Breadth-first traversal starting at `source`.
+ * @brief Recorrido en anchura (breadth-first) que comienza en `source`.
  *
- * Visits `source` and every vertex reachable from it, level by level, using
- * an explicit queue. Vertices in a different connected component (or, for a
- * directed graph, not reachable via directed edges from `source`) are never
- * visited. O(V + E) time, O(V) extra space.
+ * Visita `source` y todo vértice alcanzable desde él, nivel por nivel,
+ * usando una cola explícita. Los vértices en otra componente conexa (o, en
+ * un grafo dirigido, no alcanzables mediante aristas dirigidas desde
+ * `source`) nunca son visitados. Tiempo O(V + E), espacio extra O(V).
  *
- * @return The order in which vertices were first visited. Empty if `source`
- * is not a vertex of `graph`.
+ * @return El orden en que los vértices fueron visitados por primera vez.
+ * Vacío si `source` no es un vértice de `graph`.
  */
 template <typename Vertex>
 std::vector<Vertex> bfs(const Graph<Vertex>& graph, const Vertex& source) {
@@ -31,20 +31,21 @@ std::vector<Vertex> bfs(const Graph<Vertex>& graph, const Vertex& source) {
 }
 
 /**
- * @brief Depth-first traversal starting at `source`, iterative (explicit
- * stack, no recursion) so it cannot overflow the call stack on graphs with
- * long paths.
+ * @brief Recorrido en profundidad (depth-first) que comienza en `source`,
+ * de forma iterativa (pila explícita, sin recursión) para que no pueda
+ * desbordar la pila de llamadas en grafos con caminos largos.
  *
- * Note this iterative version, because it pushes all neighbors before
- * popping, does not necessarily visit neighbors in the same left-to-right
- * order that a naive recursive DFS would; both are valid depth-first
- * orders. A recursive auxiliary is provided as `dfs_recursive` for
- * comparison in class -- prefer the iterative `dfs` in production code.
+ * Nótese que esta versión iterativa, al apilar todos los vecinos antes de
+ * desapilar, no necesariamente visita los vecinos en el mismo orden de
+ * izquierda a derecha que lo haría un DFS recursivo ingenuo; ambos son
+ * órdenes válidos de profundidad. Se ofrece un auxiliar recursivo como
+ * `dfs_recursive` para comparación en clase -- prefiera el `dfs` iterativo
+ * en código de producción.
  *
- * O(V + E) time, O(V) extra space.
+ * Tiempo O(V + E), espacio extra O(V).
  *
- * @return The order in which vertices were first visited. Empty if `source`
- * is not a vertex of `graph`.
+ * @return El orden en que los vértices fueron visitados por primera vez.
+ * Vacío si `source` no es un vértice de `graph`.
  */
 template <typename Vertex>
 std::vector<Vertex> dfs(const Graph<Vertex>& graph, const Vertex& source) {
@@ -66,10 +67,10 @@ void dfs_recursive_impl(const Graph<Vertex>& graph, const Vertex& current,
 }  // namespace detail
 
 /**
- * @brief Textbook recursive depth-first traversal, offered purely for
- * pedagogical comparison against the iterative `dfs`. Each recursive call
- * consumes a stack frame, so this can overflow on graphs with very long
- * paths -- prefer `dfs` outside the classroom.
+ * @brief Recorrido en profundidad recursivo de libro de texto, ofrecido
+ * puramente para comparación pedagógica frente al `dfs` iterativo. Cada
+ * llamada recursiva consume un marco de pila, así que puede desbordarse en
+ * grafos con caminos muy largos -- prefiera `dfs` fuera del salón de clase.
  */
 template <typename Vertex>
 std::vector<Vertex> dfs_recursive(const Graph<Vertex>& graph, const Vertex& source) {
@@ -80,24 +81,25 @@ std::vector<Vertex> dfs_recursive(const Graph<Vertex>& graph, const Vertex& sour
 }
 
 /**
- * @brief Dijkstra's single-source shortest path algorithm.
+ * @brief Algoritmo de Dijkstra de caminos más cortos desde un único origen.
  *
- * Computes the minimum total edge weight from `source` to every vertex
- * reachable from it. Uses `std::priority_queue` (a binary heap) as the
- * frontier's min-priority-queue-by-distance; a future iteration of this
- * course can swap it for `dsa::PriorityQueue` / `dsa::BinaryHeap` from the
- * heaps module once that module exists, without changing this function's
- * interface.
+ * Calcula el peso total mínimo de aristas desde `source` hasta cada vértice
+ * alcanzable desde él. Usa `std::priority_queue` (un heap binario) como la
+ * cola de prioridad mínima por distancia de la frontera; una futura
+ * iteración de este curso podría reemplazarla por `dsa::PriorityQueue` /
+ * `dsa::BinaryHeap` del módulo de heaps una vez que ese módulo exista, sin
+ * cambiar la interfaz de esta función.
  *
- * Throws `std::invalid_argument` if any edge in the graph has a negative
- * weight, since Dijkstra's greedy relaxation is not correct in that case
- * (see docs/guides/07_graphs.md for why, and Bellman-Ford as the fix).
+ * Lanza `std::invalid_argument` si alguna arista del grafo tiene peso
+ * negativo, ya que la relajación voraz de Dijkstra no es correcta en ese
+ * caso (ver docs/guides/07_graphs.md para el porqué, y Bellman-Ford como la
+ * solución).
  *
- * O((V + E) log V) time with a binary heap.
+ * Tiempo O((V + E) log V) con un heap binario.
  *
- * @return Map from every vertex reachable from `source` to its shortest
- * distance. `source` itself maps to 0. Unreachable vertices are absent from
- * the map.
+ * @return Mapa de cada vértice alcanzable desde `source` a su distancia más
+ * corta. `source` en sí se mapea a 0. Los vértices inalcanzables están
+ * ausentes del mapa.
  */
 template <typename Vertex>
 std::unordered_map<Vertex, double> dijkstra(const Graph<Vertex>& graph, const Vertex& source) {
@@ -108,19 +110,20 @@ std::unordered_map<Vertex, double> dijkstra(const Graph<Vertex>& graph, const Ve
 }
 
 /**
- * @brief Topological sort of a directed acyclic graph (DAG) via Kahn's
- * algorithm: repeatedly remove a vertex with in-degree 0.
+ * @brief Orden topológico de un grafo acíclico dirigido (DAG) mediante el
+ * algoritmo de Kahn: eliminar repetidamente un vértice con grado de entrada
+ * 0.
  *
- * Only meaningful for directed graphs. Throws `std::invalid_argument` if
- * `graph.directed()` is false, and `std::runtime_error` if the graph
- * contains a cycle (in which case no valid topological order exists --
- * Kahn's algorithm detects this because some vertices never reach
- * in-degree 0).
+ * Solo tiene sentido para grafos dirigidos. Lanza `std::invalid_argument`
+ * si `graph.directed()` es false, y `std::runtime_error` si el grafo
+ * contiene un ciclo (en cuyo caso no existe un orden topológico válido --
+ * el algoritmo de Kahn detecta esto porque algunos vértices nunca alcanzan
+ * grado de entrada 0).
  *
- * O(V + E) time.
+ * Tiempo O(V + E).
  *
- * @return A valid topological order: for every edge u -> v, u appears
- * before v.
+ * @return Un orden topológico válido: para cada arista u -> v, u aparece
+ * antes que v.
  */
 template <typename Vertex>
 std::vector<Vertex> topological_sort(const Graph<Vertex>& graph) {

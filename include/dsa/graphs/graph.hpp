@@ -10,30 +10,32 @@
 namespace dsa {
 
 /**
- * @brief A directed or undirected, weighted graph stored as an adjacency
- * list.
+ * @brief Un grafo dirigido o no dirigido, ponderado, almacenado como una
+ * lista de adyacencia.
  *
- * Graph<Vertex> keeps a `std::unordered_map<Vertex, std::vector<std::pair<Vertex,
- * double>>>` mapping every vertex to its list of (neighbor, weight) pairs.
- * This representation costs O(V + E) memory and answers "who are v's
- * neighbors?" in O(deg(v)) time, which is what BFS/DFS/Dijkstra need. It
- * trades away the O(1) `has_edge` you would get from an adjacency matrix
- * (here it is O(deg(v))) in exchange for not paying O(V^2) memory on sparse
- * graphs -- see docs/guides/07_graphs.md for the full trade-off discussion.
+ * Graph<Vertex> mantiene un `std::unordered_map<Vertex, std::vector<std::pair<Vertex,
+ * double>>>` que asocia cada vértice con su lista de pares (vecino, peso).
+ * Esta representación cuesta O(V + E) de memoria y responde "¿quiénes son
+ * los vecinos de v?" en tiempo O(deg(v)), que es justo lo que necesitan
+ * BFS/DFS/Dijkstra. A cambio, se renuncia al `has_edge` en O(1) que
+ * ofrecería una matriz de adyacencia (aquí es O(deg(v))), a cambio de no
+ * pagar O(V^2) de memoria en grafos dispersos -- ver docs/guides/07_graphs.md
+ * para la discusión completa de esta disyuntiva.
  *
- * The graph can be constructed as directed or undirected. In the undirected
- * case, `add_edge(u, v, w)` inserts both (u -> v, w) and (v -> u, w); the
- * two directions are stored independently, so `remove_edge` also removes
- * both.
+ * El grafo puede construirse como dirigido o no dirigido. En el caso no
+ * dirigido, `add_edge(u, v, w)` inserta tanto (u -> v, w) como (v -> u, w);
+ * las dos direcciones se almacenan de forma independiente, así que
+ * `remove_edge` también elimina ambas.
  *
- * Edge weights default to 1.0, so an unweighted graph can simply ignore the
- * weight parameter and every algorithm still behaves sensibly (e.g. BFS
- * gives shortest path in number of edges, and Dijkstra on unit weights
- * agrees with BFS distances).
+ * Los pesos de las aristas son 1.0 por defecto, así que un grafo no
+ * ponderado puede simplemente ignorar el parámetro de peso y todos los
+ * algoritmos se siguen comportando de forma razonable (p. ej. BFS da el
+ * camino más corto en número de aristas, y Dijkstra con pesos unitarios
+ * coincide con las distancias de BFS).
  *
- * @tparam Vertex Vertex identifier type. Must be usable as a key in
- * `std::unordered_map` (hashable and equality-comparable). Defaults to
- * `int`.
+ * @tparam Vertex Tipo identificador de vértice. Debe poder usarse como
+ * clave en `std::unordered_map` (hasheable y comparable por igualdad). Por
+ * defecto es `int`.
  */
 template <typename Vertex = int>
 class Graph {
@@ -41,23 +43,24 @@ class Graph {
     using AdjacencyList = std::vector<std::pair<Vertex, double>>;
 
     /**
-     * @brief Constructs an empty graph.
-     * @param directed If true, edges are one-directional (u -> v only). If
-     * false (the default), `add_edge`/`remove_edge` operate symmetrically.
+     * @brief Construye un grafo vacío.
+     * @param directed Si es true, las aristas son unidireccionales (solo
+     * u -> v). Si es false (el valor por defecto), `add_edge`/`remove_edge`
+     * operan de forma simétrica.
      */
     explicit Graph(bool directed = false) : directed_(directed), edge_count_(0) {}
 
-    /** @brief True if this graph treats edges as one-directional. */
+    /** @brief True si este grafo trata las aristas como unidireccionales. */
     bool directed() const noexcept { return directed_; }
 
-    /** @brief Adds `v` to the graph with no neighbors, if not already present. */
+    /** @brief Agrega `v` al grafo sin vecinos, si no estaba ya presente. */
     void add_vertex(const Vertex& v) { adjacency_.try_emplace(v); }
 
     /**
-     * @brief Adds a weighted edge from `u` to `v` (and from `v` to `u` when
-     * the graph is undirected). Creates `u` and `v` as vertices if they did
-     * not already exist. Does not check for duplicate edges: adding the same
-     * edge twice creates a parallel edge.
+     * @brief Agrega una arista ponderada de `u` a `v` (y de `v` a `u` cuando
+     * el grafo no es dirigido). Crea `u` y `v` como vértices si aún no
+     * existían. No verifica aristas duplicadas: agregar la misma arista dos
+     * veces crea una arista paralela.
      */
     void add_edge(const Vertex& u, const Vertex& v, double weight = 1.0) {
         add_vertex(u);
@@ -70,8 +73,8 @@ class Graph {
     }
 
     /**
-     * @brief Removes every edge from `u` to `v` (and from `v` to `u` when
-     * undirected). No-op if the edge does not exist.
+     * @brief Elimina toda arista de `u` a `v` (y de `v` a `u` cuando el
+     * grafo no es dirigido). No hace nada si la arista no existe.
      */
     void remove_edge(const Vertex& u, const Vertex& v) {
         auto it = adjacency_.find(u);
@@ -96,7 +99,7 @@ class Graph {
         }
     }
 
-    /** @brief True if there is at least one edge from `u` to `v`. */
+    /** @brief True si existe al menos una arista de `u` a `v`. */
     bool has_edge(const Vertex& u, const Vertex& v) const {
         auto it = adjacency_.find(u);
         if (it == adjacency_.end()) return false;
@@ -106,8 +109,8 @@ class Graph {
     }
 
     /**
-     * @brief Returns the (neighbor, weight) pairs reachable directly from `v`.
-     * Returns an empty vector if `v` is not in the graph.
+     * @brief Devuelve los pares (vecino, peso) alcanzables directamente
+     * desde `v`. Devuelve un vector vacío si `v` no está en el grafo.
      */
     const AdjacencyList& neighbors(const Vertex& v) const {
         static const AdjacencyList kEmpty{};
@@ -116,20 +119,20 @@ class Graph {
         return it->second;
     }
 
-    /** @brief True if `v` has been added to the graph (as a vertex or edge endpoint). */
+    /** @brief True si `v` ha sido agregado al grafo (como vértice o extremo de arista). */
     bool contains(const Vertex& v) const { return adjacency_.find(v) != adjacency_.end(); }
 
-    /** @brief Number of vertices currently in the graph. */
+    /** @brief Número de vértices actualmente en el grafo. */
     std::size_t vertex_count() const noexcept { return adjacency_.size(); }
 
     /**
-     * @brief Number of edges added via `add_edge`. In an undirected graph,
-     * an edge {u, v} counts once even though it is stored in both adjacency
-     * lists.
+     * @brief Número de aristas agregadas mediante `add_edge`. En un grafo no
+     * dirigido, una arista {u, v} cuenta una sola vez aunque se almacene en
+     * ambas listas de adyacencia.
      */
     std::size_t edge_count() const noexcept { return edge_count_; }
 
-    /** @brief Returns all vertices currently in the graph, in unspecified order. */
+    /** @brief Devuelve todos los vértices actualmente en el grafo, en orden no especificado. */
     std::vector<Vertex> vertices() const {
         std::vector<Vertex> out;
         out.reserve(adjacency_.size());

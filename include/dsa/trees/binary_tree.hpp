@@ -14,27 +14,29 @@
 namespace dsa {
 
 /**
- * @brief A generic (not necessarily ordered) binary tree.
+ * @brief Un arbol binario generico (no necesariamente ordenado).
  *
- * BinaryTree stores its elements in a linked structure of nodes with `left`
- * and `right` children. Unlike a BinarySearchTree, no ordering invariant is
- * enforced: `insert` always places the new element in the first free slot
- * found in level order (breadth-first), which is exactly how you would grow
- * a binary heap by position. This gives students a concrete, deterministic
- * shape to reason about (always a "complete" binary tree, filled left to
- * right, level by level) before introducing the BST ordering invariant in
- * the next module.
+ * BinaryTree almacena sus elementos en una estructura enlazada de nodos con
+ * hijos `left` y `right`. A diferencia de un BinarySearchTree, no se impone
+ * ningun invariante de orden: `insert` siempre coloca el nuevo elemento en
+ * el primer espacio libre encontrado en orden por niveles (breadth-first),
+ * exactamente como crece un binary heap por posicion. Esto le da a los
+ * estudiantes una forma concreta y determinista para razonar (siempre un
+ * arbol binario "completo", llenado de izquierda a derecha, nivel por
+ * nivel) antes de introducir el invariante de orden BST en el siguiente
+ * modulo.
  *
- * The four classic traversals are exposed both as functions that return a
- * `std::vector<T>` and as overloads that accept a visitor callback, so
- * students can see both styles used in the wild.
+ * Los cuatro recorridos clasicos se exponen tanto como funciones que
+ * devuelven un `std::vector<T>` como sobrecargas que aceptan un callback
+ * visitante, para que los estudiantes vean ambos estilos usados en la
+ * practica.
  *
- * @tparam T Element type. Must be copy or move constructible.
+ * @tparam T Tipo de elemento. Debe ser copiable o movible en construccion.
  */
 template <typename T>
 class BinaryTree : public Collection<T> {
    private:
-    /** @brief Internal node: owns its children via raw pointers. */
+    /** @brief Nodo interno: posee sus hijos mediante punteros crudos. */
     struct Node {
         T value;
         Node* left = nullptr;
@@ -48,16 +50,16 @@ class BinaryTree : public Collection<T> {
     using value_type = T;
     using VisitFn = std::function<void(const T&)>;
 
-    /** @brief Constructs an empty BinaryTree. */
+    /** @brief Construye un BinaryTree vacio. */
     BinaryTree() noexcept : root_(nullptr), size_(0) {}
 
-    /** @brief Copy constructor. Performs a deep copy of `other`'s nodes. */
+    /** @brief Constructor de copia. Realiza una copia profunda de los nodos de `other`. */
     BinaryTree(const BinaryTree& other) : root_(nullptr), size_(0) {
         root_ = clone_subtree(other.root_);
         size_ = other.size_;
     }
 
-    /** @brief Copy assignment. Performs a deep copy of `other`'s nodes. */
+    /** @brief Asignacion de copia. Realiza una copia profunda de los nodos de `other`. */
     BinaryTree& operator=(const BinaryTree& other) {
         if (this != &other) {
             BinaryTree tmp(other);
@@ -66,13 +68,13 @@ class BinaryTree : public Collection<T> {
         return *this;
     }
 
-    /** @brief Move constructor. Leaves `other` empty. */
+    /** @brief Constructor de movimiento. Deja `other` vacio. */
     BinaryTree(BinaryTree&& other) noexcept : root_(other.root_), size_(other.size_) {
         other.root_ = nullptr;
         other.size_ = 0;
     }
 
-    /** @brief Move assignment. Leaves `other` empty. */
+    /** @brief Asignacion de movimiento. Deja `other` vacio. */
     BinaryTree& operator=(BinaryTree&& other) noexcept {
         if (this != &other) {
             destroy_subtree(root_);
@@ -84,29 +86,30 @@ class BinaryTree : public Collection<T> {
         return *this;
     }
 
-    /** @brief Destructor. Frees every node in the tree. */
+    /** @brief Destructor. Libera todos los nodos del arbol. */
     ~BinaryTree() override { destroy_subtree(root_); }
 
-    /** @brief Swaps contents with `other` in constant time. */
+    /** @brief Intercambia el contenido con `other` en tiempo constante. */
     void swap(BinaryTree& other) noexcept {
         std::swap(root_, other.root_);
         std::swap(size_, other.size_);
     }
 
     /**
-     * @brief Inserts `value` in the first free slot in level order (BFS),
-     * exactly as a binary heap grows by position. O(n) because we must walk
-     * the frontier of the tree to find that slot.
+     * @brief Inserta `value` en el primer espacio libre en orden por
+     * niveles (BFS), exactamente como crece un binary heap por posicion.
+     * O(n) porque hay que recorrer la frontera del arbol para hallar ese
+     * espacio.
      */
     void insert(const T& value) { insert_impl(Node(value)); }
 
     /** @copydoc insert(const T&) */
     void insert(T&& value) { insert_impl(Node(std::move(value))); }
 
-    /** @brief Number of elements currently stored. */
+    /** @brief Numero de elementos almacenados actualmente. */
     std::size_t size() const noexcept override { return size_; }
 
-    /** @brief Removes every element, leaving the tree empty. */
+    /** @brief Elimina todos los elementos, dejando el arbol vacio. */
     void clear() override {
         destroy_subtree(root_);
         root_ = nullptr;
@@ -114,13 +117,13 @@ class BinaryTree : public Collection<T> {
     }
 
     /**
-     * @brief Height of the tree: number of edges on the longest root-to-leaf
-     * path. An empty tree has height -1 by convention, a single-node tree has
-     * height 0.
+     * @brief Altura del arbol: numero de aristas en el camino raiz-hoja mas
+     * largo. Un arbol vacio tiene altura -1 por convencion, un arbol de un
+     * solo nodo tiene altura 0.
      */
     int height() const { return height_of(root_); }
 
-    /** @brief In-order traversal (left, node, right) as a vector. */
+    /** @brief Recorrido en orden (left, node, right) como vector. */
     std::vector<T> inorder() const {
         std::vector<T> out;
         out.reserve(size_);
@@ -128,10 +131,10 @@ class BinaryTree : public Collection<T> {
         return out;
     }
 
-    /** @brief In-order traversal (left, node, right) invoking `visit` per element. */
+    /** @brief Recorrido en orden (left, node, right) invocando `visit` por cada elemento. */
     void inorder(const VisitFn& visit) const { inorder_impl(root_, visit); }
 
-    /** @brief Pre-order traversal (node, left, right) as a vector. */
+    /** @brief Recorrido pre-orden (node, left, right) como vector. */
     std::vector<T> preorder() const {
         std::vector<T> out;
         out.reserve(size_);
@@ -139,10 +142,10 @@ class BinaryTree : public Collection<T> {
         return out;
     }
 
-    /** @brief Pre-order traversal (node, left, right) invoking `visit` per element. */
+    /** @brief Recorrido pre-orden (node, left, right) invocando `visit` por cada elemento. */
     void preorder(const VisitFn& visit) const { preorder_impl(root_, visit); }
 
-    /** @brief Post-order traversal (left, right, node) as a vector. */
+    /** @brief Recorrido post-orden (left, right, node) como vector. */
     std::vector<T> postorder() const {
         std::vector<T> out;
         out.reserve(size_);
@@ -150,10 +153,10 @@ class BinaryTree : public Collection<T> {
         return out;
     }
 
-    /** @brief Post-order traversal (left, right, node) invoking `visit` per element. */
+    /** @brief Recorrido post-orden (left, right, node) invocando `visit` por cada elemento. */
     void postorder(const VisitFn& visit) const { postorder_impl(root_, visit); }
 
-    /** @brief Level-order (breadth-first) traversal as a vector. */
+    /** @brief Recorrido por niveles (breadth-first) como vector. */
     std::vector<T> level_order() const {
         std::vector<T> out;
         out.reserve(size_);
@@ -161,7 +164,7 @@ class BinaryTree : public Collection<T> {
         return out;
     }
 
-    /** @brief Level-order (breadth-first) traversal invoking `visit` per element. */
+    /** @brief Recorrido por niveles (breadth-first) invocando `visit` por cada elemento. */
     void level_order(const VisitFn& visit) const {
         if (root_ == nullptr) return;
         std::queue<Node*> pending;
@@ -176,8 +179,9 @@ class BinaryTree : public Collection<T> {
     }
 
    protected:
-    // Exposed to derived classes (e.g. a future AVL/BST-adjacent module) that
-    // may want to reuse the node type and traversal helpers.
+    // Expuesto a clases derivadas (p. ej. un futuro modulo AVL/afin a BST)
+    // que quieran reutilizar el tipo de nodo y las funciones auxiliares de
+    // recorrido.
     Node* root_;
     std::size_t size_;
 
