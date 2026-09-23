@@ -14,6 +14,10 @@ Tratamos la Ciencia de la Computación como una ciencia experimental. Cada estru
 
 ## 🚀 Primeros Pasos
 
+> **¿Eres estudiante de este curso?** Antes de clonar, sigue
+> **[docs/CONFIGURACION_ESTUDIANTE.md](docs/CONFIGURACION_ESTUDIANTE.md)**
+> para crear tu propia copia privada a partir de esta plantilla.
+
 ### Requisitos previos
 - **Compilador de C++** compatible con C++17 (GCC 9+, Clang 10+, MSVC 2019+).
 - **CMake** 3.15 o superior.
